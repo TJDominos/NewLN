@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-pixel: "Press Start 2P", cursive;
+  --font-vt323: "VT323", monospace;
+}
+
+body {
+  background-color: #b0b3b8;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+}
+
+.text-outline {
+  text-shadow: 
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     2px  2px 0 #000;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@keyframes reel-blur {
+  0% { transform: translateY(-40%); filter: blur(2px); opacity: 0.6; }
+  100% { transform: translateY(40%); filter: blur(2px); opacity: 0.6; }
+}
+
+.animate-reel {
+  animation: reel-blur 0.1s linear infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px) rotate(-1deg); }
+  75% { transform: translateX(4px) rotate(1deg); }
+}
+.animate-shake {
+  animation: shake 0.2s ease-in-out infinite;
+}
+.animate-shake-hard {
+  animation: shake 0.1s ease-in-out infinite;
+}
