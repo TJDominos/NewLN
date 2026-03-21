@@ -1,4 +1,4 @@
-import React, { RefObject, useEffect, useRef } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Coins, Minus, Plus, RefreshCw } from 'lucide-react';
 
@@ -40,6 +40,59 @@ export const Controls: React.FC<ControlsProps> = ({
   winAmountRef,
 }) => {
   const autoMenuRef = useRef<HTMLDivElement>(null);
+
+  const [inputValue, setInputValue] = useState(bet.toString());
+
+  useEffect(() => {
+    setInputValue(bet.toString());
+  }, [bet]);
+
+  const validBets = [1, 2, 5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+
+  const handleMinus = () => {
+    const nextBet = [...validBets].reverse().find(b => b < bet);
+    if (nextBet !== undefined) {
+      setBet(nextBet);
+    } else {
+      setBet(Math.max(1, bet - 1));
+    }
+  };
+
+  const handlePlus = () => {
+    const nextBet = validBets.find(b => b > bet);
+    if (nextBet !== undefined) {
+      setBet(nextBet);
+    } else {
+      setBet(Math.min(100, bet + 1));
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value;
+    
+    // Prevent leading zeros
+    val = val.replace(/^0+/, '');
+    
+    setInputValue(val);
+    
+    if (val !== '') {
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 1 && num <= 100) {
+        setBet(num);
+      }
+    }
+  };
+
+  const handleInputBlur = () => {
+    let num = parseInt(inputValue, 10);
+    if (isNaN(num) || num < 1) {
+      num = 1;
+    } else if (num > 100) {
+      num = 100;
+    }
+    setBet(num);
+    setInputValue(num.toString());
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -98,19 +151,26 @@ export const Controls: React.FC<ControlsProps> = ({
       <div className="flex items-center gap-2">
         <div className="flex-1 bg-zinc-800 rounded-xl p-1.5 flex items-center justify-between border border-zinc-700/50">
           <button 
-            onClick={() => setBet(Math.max(10, bet - 10))}
-            disabled={isSpinning || bet <= 10 || autoSpinsLeft > 0}
+            onClick={handleMinus}
+            disabled={isSpinning || bet <= 1 || autoSpinsLeft > 0}
             className="p-2 bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
           >
             <Minus size={16} />
           </button>
           <div className="flex flex-col items-center px-1">
             <span className="text-zinc-500 text-[9px] uppercase tracking-wider font-bold">Bet</span>
-            <span className="text-base font-mono font-bold">{bet}</span>
+            <input
+              type="number"
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              disabled={isSpinning || autoSpinsLeft > 0}
+              className="w-12 bg-transparent text-center text-base font-mono font-bold outline-none text-white disabled:opacity-50"
+            />
           </div>
           <button 
-            onClick={() => setBet(bet + 10)}
-            disabled={isSpinning || bet >= balance || autoSpinsLeft > 0}
+            onClick={handlePlus}
+            disabled={isSpinning || bet >= 100 || bet >= balance || autoSpinsLeft > 0}
             className="p-2 bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
           >
             <Plus size={16} />
