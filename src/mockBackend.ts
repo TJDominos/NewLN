@@ -138,7 +138,7 @@ export const mockBackendSpin = async (
         const payoutMultiplier = PAYTABLE.find(s => s.id === winningSymbol)?.payout || 0;
         stepWin += bet * payoutMultiplier * multiplier;
         
-        if (winningSymbol === 'five') jackpotWon = true;
+        if (winningSymbol === 'five' || winningSymbol === 'wild') jackpotWon = true;
         
         winningLines.push([
           line[0][0], line[0][1],

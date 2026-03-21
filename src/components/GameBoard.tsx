@@ -156,7 +156,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                   <p><strong className="text-purple-400">Wild (W):</strong> Substitutes for all symbols.</p>
                   <p><strong className="text-yellow-500">Cascades & Multiplier:</strong> Winning symbols disappear, and new ones drop in. Each consecutive cascade increases your win multiplier by 1x!</p>
                   <p><strong className="text-emerald-400">Hold Column:</strong> After a spin, you can choose to "Hold" 1 or 2 columns, locking them in place for the next spin to improve your chances of winning.</p>
-                  <p><strong className="text-red-400">Jackpot (5):</strong> 3 '5' symbols on any line awards the Progressive Jackpot.</p>
+                  <p><strong className="text-red-400">Jackpot:</strong> 3 '5' or 3 'WILD' symbols on any line awards their fixed prize + the entire Progressive Jackpot!</p>
                 </div>
               </div>
             </motion.div>

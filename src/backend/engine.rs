@@ -168,7 +168,7 @@ impl SlotEngine {
                 let payout = Self::get_payout(&win_sym);
                 step_win += bet * payout * (multiplier as u64);
                 
-                if win_sym == Symbol::Five { jackpot_won = true; }
+                if win_sym == Symbol::Five || win_sym == Symbol::Wild { jackpot_won = true; }
                 
                 winning_lines.push(vec![
                     line[0][0], line[0][1],
