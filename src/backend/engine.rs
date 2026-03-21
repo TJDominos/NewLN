@@ -53,7 +53,26 @@ impl SlotEngine {
         bet: u64, 
         held_cols: Vec<bool>, 
         previous_grid: &Grid
-    ) -> SpinReceipt {
+    ) -> Result<SpinReceipt, String> {
+        
+        // --- BACKEND VALIDATION LOGIC ---
+        if held_cols.len() != 3 {
+            return Err("Invalid hold configuration: must specify exactly 3 columns.".to_string());
+        }
+
+        let held_count = held_cols.iter().filter(|&&h| h).count();
+        if held_count > 2 {
+            return Err("Cannot hold all 3 columns. Maximum 2 columns can be held.".to_string());
+        }
+
+        if held_count > 0 {
+            if previous_grid.len() != 3 || previous_grid.iter().any(|col| col.len() != 3) {
+                return Err("Cannot hold columns without a valid previous spin grid.".to_string());
+            }
+            // Note: In a real backend, you would also validate that the `bet` matches the previous spin's bet.
+        }
+        // --------------------------------
+
         let mut prng = ChaCha20Rng::from_seed(seed);
         
         // 1. Generate Initial Grid
@@ -95,13 +114,13 @@ impl SlotEngine {
             if cascades.len() > 50 { break; }
         }
 
-        SpinReceipt {
+        Ok(SpinReceipt {
             initial_grid: initial_grid_clone,
             cascades,
             total_win,
             free_spins_awarded,
             jackpot_won,
-        }
+        })
     }
 
     // --- Helper Methods ---

@@ -115,6 +115,13 @@ export default function App() {
   const [heldCols, setHeldCols] = useState<boolean[]>([false, false, false]);
   const [canHold, setCanHold] = useState(false);
   const [cascadeMultiplier, setCascadeMultiplier] = useState(1);
+  const [backendError, setBackendError] = useState<string | null>(null);
+
+  const handleSetBet = (newBet: number) => {
+    setBet(newBet);
+    setHeldCols([false, false, false]);
+    setCanHold(false);
+  };
 
   const balanceRefValue = useRef(balance);
   const betRefValue = useRef(bet);
@@ -232,6 +239,7 @@ export default function App() {
     setWinAmount(0);
     setCanHold(false);
     setCascadeMultiplier(1);
+    setBackendError(null);
 
     // Start the visual spinning and sound immediately
     if (!heldCols.every(h => h)) {
@@ -299,12 +307,21 @@ export default function App() {
     // Call mock backend concurrently
     try {
       backendReceipt = await mockBackendSpin(bet, heldCols, grid);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Spin failed", error);
+      setBackendError(error.message || "An error occurred during the spin.");
       clearInterval(spinInterval);
       stopSpinSound();
       setIsSpinning(false);
       setSpinningCols([false, false, false]);
+      
+      // Refund bet if it was a normal spin
+      if (freeSpinsLeft === 0) {
+        setBalance(prev => prev + bet);
+        setProgressivePool(prev => prev - bet * 0.09);
+      } else {
+        setFreeSpinsLeft(prev => prev + 1);
+      }
       return;
     } finally {
       backendFinishedTime = elapsed;
@@ -480,6 +497,12 @@ export default function App() {
 
       <div className={`w-full max-w-sm px-4 mt-4 flex flex-col gap-4 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
+        {backendError && (
+          <div className="bg-red-900/80 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm text-center">
+            {backendError}
+          </div>
+        )}
+
         {/* Progressive Jackpot & Free Spins */}
         <div className="w-full flex gap-2">
           <div className="flex-1 bg-gradient-to-b from-yellow-600 to-yellow-900 rounded-xl p-[2px] shadow-[0_0_20px_rgba(234,179,8,0.15)]">
@@ -544,7 +567,7 @@ export default function App() {
           balance={balance}
           winAmount={winAmount}
           bet={bet}
-          setBet={setBet}
+          setBet={handleSetBet}
           isSpinning={isSpinning}
           autoSpinsLeft={autoSpinsLeft}
           stopAutoSpins={stopAutoSpins}

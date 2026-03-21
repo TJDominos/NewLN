@@ -69,6 +69,24 @@ export const mockBackendSpin = async (
   previousGrid: SymbolData[][]
 ): Promise<SpinReceipt> => {
   
+  // --- BACKEND VALIDATION LOGIC ---
+  if (!heldCols || heldCols.length !== 3) {
+    throw new Error("Invalid hold configuration: must specify exactly 3 columns.");
+  }
+
+  const heldCount = heldCols.filter(Boolean).length;
+  if (heldCount > 2) {
+    throw new Error("Cannot hold all 3 columns. Maximum 2 columns can be held.");
+  }
+
+  if (heldCount > 0) {
+    if (!previousGrid || previousGrid.length !== 3 || previousGrid[0].length !== 3) {
+      throw new Error("Cannot hold columns without a valid previous spin grid.");
+    }
+    // Note: In a real backend, you would also validate that the `bet` matches the previous spin's bet.
+  }
+  // --------------------------------
+
   // Simulate network latency (the ~2s consensus delay for raw_rand)
   await new Promise(resolve => setTimeout(resolve, 1500));
 
