@@ -5,7 +5,7 @@ use rand_chacha::ChaCha20Rng;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Symbol {
-    Cherry, Banana, Lemon, Orange, Grape, Strawberry, Apple, Watermelon, Star, Five, Wild, Scatter
+    Cherry, Banana, Lemon, Orange, Grape, Strawberry, Apple, Watermelon, Star, Five, Wild
 }
 
 #[derive(Clone, Debug)]
@@ -22,7 +22,6 @@ pub struct CascadeStep {
     pub winning_lines: Vec<Vec<usize>>, // [row, col, row, col, row, col]
     pub step_win: u64,
     pub multiplier: u32,
-    pub scatter_count: u32,
 }
 
 #[derive(Clone, Debug)]
@@ -69,26 +68,24 @@ impl SlotEngine {
 
         // 2. Synchronous Cascade Loop
         loop {
-            let (step_win, winning_lines, scatter_count, won_jackpot) = 
+            let (step_win, winning_lines, won_jackpot) = 
                 Self::evaluate_grid(&current_grid, bet, multiplier);
             
-            if winning_lines.is_empty() && scatter_count < 3 {
+            if winning_lines.is_empty() {
                 break; // No wins, end cascade sequence
             }
 
             total_win += step_win;
             if won_jackpot { jackpot_won = true; }
-            if scatter_count >= 3 { free_spins_awarded += 5; }
 
             // Apply gravity and fill empty spaces
-            let next_grid = Self::apply_gravity_and_refill(&current_grid, &winning_lines, scatter_count >= 3, &mut prng);
+            let next_grid = Self::apply_gravity_and_refill(&current_grid, &winning_lines, &mut prng);
 
             cascades.push(CascadeStep {
                 grid: next_grid.clone(),
                 winning_lines,
                 step_win,
                 multiplier,
-                scatter_count,
             });
 
             current_grid = next_grid;
@@ -123,7 +120,7 @@ impl SlotEngine {
         grid
     }
 
-    fn evaluate_grid(grid: &Grid, bet: u64, multiplier: u32) -> (u64, Vec<Vec<usize>>, u32, bool) {
+    fn evaluate_grid(grid: &Grid, bet: u64, multiplier: u32) -> (u64, Vec<Vec<usize>>, bool) {
         let mut step_win = 0;
         let mut winning_lines = Vec::new();
         let mut jackpot_won = false;
@@ -138,7 +135,6 @@ impl SlotEngine {
             let mut is_win = true;
 
             for s in [s1, s2, s3] {
-                if *s == Symbol::Scatter { is_win = false; break; }
                 if *s != Symbol::Wild {
                     if let Some(ref ws) = winning_symbol {
                         if ws != s { is_win = false; break; }
@@ -163,36 +159,12 @@ impl SlotEngine {
             }
         }
 
-        // Check scatters
-        let mut scatter_count = 0;
-        for r in 0..3 {
-            for c in 0..3 {
-                if grid[r][c].name == Symbol::Scatter { scatter_count += 1; }
-            }
-        }
-
-        if scatter_count >= 3 {
-            step_win += bet * 5 * (multiplier as u64);
-            // Add all scatters to winning lines for animation purposes
-            let mut scatter_line = Vec::new();
-            for r in 0..3 {
-                for c in 0..3 {
-                    if grid[r][c].name == Symbol::Scatter {
-                        scatter_line.push(r);
-                        scatter_line.push(c);
-                    }
-                }
-            }
-            winning_lines.push(scatter_line);
-        }
-
-        (step_win, winning_lines, scatter_count, jackpot_won)
+        (step_win, winning_lines, jackpot_won)
     }
 
     fn apply_gravity_and_refill(
         grid: &Grid, 
         winning_lines: &[Vec<usize>], 
-        has_scatters: bool,
         prng: &mut ChaCha20Rng
     ) -> Grid {
         let mut new_grid = grid.clone();

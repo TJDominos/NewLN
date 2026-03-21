@@ -6,7 +6,6 @@ export interface CascadeStep {
   winningLines: number[][];
   stepWin: number;
   multiplier: number;
-  scatterCount: number;
 }
 
 export interface SpinReceipt {
@@ -28,8 +27,7 @@ const PAYTABLE: { id: IconName; weight: number; payout: number }[] = [
   { id: 'watermelon', weight: 9.84,   payout: 250 },
   { id: 'star',       weight: 7.35,   payout: 500 },
   { id: 'five',       weight: 3.76,   payout: 1000 },
-  { id: 'wild',       weight: 0.3,    payout: 2000 },
-  { id: 'scatter',    weight: 0.4,    payout: 0 }
+  { id: 'wild',       weight: 0.3,    payout: 2000 }
 ];
 
 const TOTAL_WEIGHT = PAYTABLE.reduce((sum, item) => sum + item.weight, 0);
@@ -104,8 +102,6 @@ export const mockBackendSpin = async (
       const s2 = currentGrid[line[1][0]][line[1][1]].name;
       const s3 = currentGrid[line[2][0]][line[2][1]].name;
 
-      if (s1 === 'scatter' || s2 === 'scatter' || s3 === 'scatter') return;
-
       let winningSymbol: IconName | null = null;
       let isWin = true;
 
@@ -134,25 +130,7 @@ export const mockBackendSpin = async (
       }
     });
 
-    // Evaluate Scatters
-    let scatterCount = 0;
-    const scatterPositions: number[] = [];
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        if (currentGrid[r][c].name === 'scatter') {
-          scatterCount++;
-          scatterPositions.push(r, c);
-        }
-      }
-    }
-
-    if (scatterCount >= 3) {
-      freeSpinsAwarded += 5;
-      stepWin += bet * 5 * multiplier;
-      winningLines.push(scatterPositions);
-    }
-
-    if (winningLines.length === 0 && scatterCount < 3) {
+    if (winningLines.length === 0) {
       break; // No wins, end cascade sequence
     }
 
@@ -187,8 +165,7 @@ export const mockBackendSpin = async (
       grid: nextGrid.map(row => [...row]),
       winningLines,
       stepWin,
-      multiplier,
-      scatterCount
+      multiplier
     });
 
     currentGrid = nextGrid;

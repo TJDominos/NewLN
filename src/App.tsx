@@ -21,8 +21,7 @@ export const PAYTABLE: { id: IconName; weight: number; payout: number }[] = [
   { id: 'watermelon', weight: 9.84,   payout: 250 },
   { id: 'star',       weight: 7.35,   payout: 500 },
   { id: 'five',       weight: 3.76,   payout: 1000 },
-  { id: 'wild',       weight: 0.3,    payout: 2000 },
-  { id: 'scatter',    weight: 0.4,    payout: 0 }
+  { id: 'wild',       weight: 0.3,    payout: 2000 }
 ];
 
 export type SymbolData = { id: string, name: IconName };
@@ -61,16 +60,7 @@ export const calculateRTP = () => {
   const pw = wildWeight / TOTAL_WEIGHT;
 
   PAYTABLE.forEach(symbol => {
-    if (symbol.id === 'scatter') {
-      let probSpin = 0;
-      const ps = symbol.weight / TOTAL_WEIGHT;
-      for (let k = 3; k <= 9; k++) {
-        let nCr = 1;
-        for (let i = 1; i <= k; i++) nCr = nCr * (9 - i + 1) / i;
-        probSpin += nCr * Math.pow(ps, k) * Math.pow(1 - ps, 9 - k);
-      }
-      totalRTP += probSpin * 5; // 5x payout for 3+ scatters
-    } else if (symbol.id === 'wild') {
+    if (symbol.id === 'wild') {
       const probLine = Math.pow(pw, 3);
       totalRTP += probLine * symbol.payout * LINES.length;
     } else {
@@ -338,7 +328,7 @@ export default function App() {
       setWinAmount(accumulatedWin);
       setCascadeMultiplier(step.multiplier);
 
-      if (step.winningLines.length > 0 || step.scatterCount >= 3) {
+      if (step.winningLines.length > 0) {
         // Wait for win animation
         setTimeout(() => {
           setGrid(step.grid);

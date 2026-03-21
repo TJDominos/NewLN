@@ -98,15 +98,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                       let probSpin = 0;
                       let rtpContrib = 0;
 
-                      if (item.id === 'scatter') {
-                        const ps = item.weight / totalWeight;
-                        for (let k = 3; k <= 9; k++) {
-                          let nCr = 1;
-                          for (let i = 1; i <= k; i++) nCr = nCr * (9 - i + 1) / i;
-                          probSpin += nCr * Math.pow(ps, k) * Math.pow(1 - ps, 9 - k);
-                        }
-                        rtpContrib = probSpin * 5 * 100; // 5x payout
-                      } else if (item.id === 'wild') {
+                      if (item.id === 'wild') {
                         const probLine = Math.pow(pw, 3);
                         probSpin = probLine * 8;
                         rtpContrib = probLine * item.payout * 8 * 100;
@@ -136,7 +128,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                             <PixelIcon name={item.id} size={16} />
                           </td>
                           <td className="py-2 font-mono text-emerald-400">{oddsStr}</td>
-                          <td className="py-2 font-mono text-yellow-500">{item.id === 'scatter' ? '5x+FS' : `${item.payout}x`}</td>
+                          <td className="py-2 font-mono text-yellow-500">{`${item.payout}x`}</td>
                           <td className="py-2 font-mono text-blue-400">{rtpContrib.toFixed(2)}%</td>
                         </tr>
                       );
@@ -161,8 +153,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                 </table>
 
                 <div className="mt-4 pt-3 border-t border-zinc-800 text-[10px] sm:text-xs text-zinc-400 text-left space-y-2 px-2 pb-2">
-                  <p><strong className="text-purple-400">Wild (W):</strong> Substitutes for all symbols except Scatter.</p>
-                  <p><strong className="text-cyan-400">Scatter (Bonus):</strong> 3 or more anywhere awards 5 Free Spins + 5x bet.</p>
+                  <p><strong className="text-purple-400">Wild (W):</strong> Substitutes for all symbols.</p>
                   <p><strong className="text-yellow-500">Cascades & Multiplier:</strong> Winning symbols disappear, and new ones drop in. Each consecutive cascade increases your win multiplier by 1x!</p>
                   <p><strong className="text-emerald-400">Hold Column:</strong> After a spin, you can choose to "Hold" 1 or 2 columns, locking them in place for the next spin to improve your chances of winning.</p>
                   <p><strong className="text-red-400">Jackpot (5):</strong> 3 '5' symbols on any line awards the Progressive Jackpot.</p>

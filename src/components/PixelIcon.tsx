@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type IconName = 'cherry' | 'banana' | 'lemon' | 'orange' | 'grape' | 'strawberry' | 'apple' | 'watermelon' | 'star' | 'five' | 'wild' | 'scatter';
+export type IconName = 'cherry' | 'banana' | 'lemon' | 'orange' | 'grape' | 'strawberry' | 'apple' | 'watermelon' | 'star' | 'five' | 'wild';
 
 export const PixelIcon = ({ name, className = '', size = 64 }: { name: IconName, className?: string, size?: number }) => {
   const renderIcon = () => {
@@ -222,21 +222,6 @@ export const PixelIcon = ({ name, className = '', size = 64 }: { name: IconName,
             <text x="50" y="58" fontFamily="Arial, sans-serif" fontSize="32" fontWeight="900" fill="#fff" textAnchor="middle" letterSpacing="2">WILD</text>
             <circle cx="20" cy="35" r="4" fill="#fff" opacity="0.8" />
             <circle cx="80" cy="65" r="4" fill="#fff" opacity="0.8" />
-          </svg>
-        );
-      case 'scatter':
-        return (
-          <svg viewBox="0 0 100 100" width={size} height={size} className={className}>
-            <defs>
-              <radialGradient id="scatterGrad" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#ff00ff" />
-                <stop offset="70%" stopColor="#8a2be2" />
-                <stop offset="100%" stopColor="#4b0082" />
-              </radialGradient>
-            </defs>
-            <circle cx="50" cy="50" r="40" fill="url(#scatterGrad)" stroke="#00ffff" strokeWidth="4" />
-            <path d="M 50 20 L 58 42 L 80 42 L 62 55 L 69 77 L 50 64 L 31 77 L 38 55 L 20 42 L 42 42 Z" fill="#00ffff" />
-            <text x="50" y="55" fontFamily="Arial, sans-serif" fontSize="14" fontWeight="bold" fill="#fff" textAnchor="middle">BONUS</text>
           </svg>
         );
       default:
