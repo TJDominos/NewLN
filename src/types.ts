@@ -5,13 +5,20 @@ export interface PlayRecord {
   time: string;
   bet: number;
   win: number;
+  playerName?: string;
+  avatarUrl?: string;
 }
 
-export interface WinnerRecord {
+export interface PlayboardRecord {
   id: string;
   user: string;
-  win: number;
+  avatar: string;
+  isWin: boolean;
+  winAmount?: number;
   time: string;
+  bio: string;
+  location: string;
+  joinDate: string;
 }
 
 export type { IconName };

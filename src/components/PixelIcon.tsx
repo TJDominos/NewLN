@@ -1,10 +1,39 @@
 import React from 'react';
 
-export type IconName = 'cherry' | 'banana' | 'lemon' | 'orange' | 'grape' | 'strawberry' | 'apple' | 'watermelon' | 'star' | 'five' | 'wild';
+export type IconName = 'cherry' | 'banana' | 'lemon' | 'orange' | 'grape' | 'strawberry' | 'apple' | 'watermelon' | 'star' | 'five' | 'wild' | 'missed' | 'win';
 
 export const PixelIcon = ({ name, className = '', size = 64 }: { name: IconName, className?: string, size?: number }) => {
   const renderIcon = () => {
     switch (name) {
+      case 'missed':
+        return (
+          <svg viewBox="0 0 32 32" width={size} height={size} className={className} fill="currentColor">
+            <rect x="12" y="8" width="8" height="4" />
+            <rect x="8" y="12" width="16" height="4" />
+            <rect x="4" y="16" width="24" height="4" />
+            <rect x="6" y="22" width="2" height="2" />
+            <rect x="4" y="24" width="2" height="2" />
+            <rect x="14" y="22" width="2" height="2" />
+            <rect x="12" y="24" width="2" height="2" />
+            <rect x="22" y="22" width="2" height="2" />
+            <rect x="20" y="24" width="2" height="2" />
+          </svg>
+        );
+      case 'win':
+        return (
+          <svg viewBox="0 0 32 32" width={size} height={size} className={className} fill="currentColor">
+            <rect x="10" y="10" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" />
+            <rect x="14" y="14" width="4" height="4" />
+            <rect x="14" y="2" width="4" height="4" />
+            <rect x="14" y="26" width="4" height="4" />
+            <rect x="2" y="14" width="4" height="4" />
+            <rect x="26" y="14" width="4" height="4" />
+            <rect x="6" y="6" width="2" height="2" />
+            <rect x="24" y="24" width="2" height="2" />
+            <rect x="24" y="6" width="2" height="2" />
+            <rect x="6" y="24" width="2" height="2" />
+          </svg>
+        );
       case 'cherry':
         return (
           <svg viewBox="0 0 100 100" width={size} height={size} className={className}>

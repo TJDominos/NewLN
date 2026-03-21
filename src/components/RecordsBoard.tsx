@@ -55,9 +55,17 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
           <div className="space-y-2">
             {winners.map(winner => (
               <div key={winner.id} className="flex justify-between items-center p-3 bg-zinc-800/50 rounded-xl text-sm">
-                <div className="flex flex-col">
-                  <span className="text-zinc-300 font-medium">{winner.user}</span>
-                  <span className="text-zinc-500 font-mono text-xs">{winner.time}</span>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${winner.user}`} 
+                    alt={winner.user} 
+                    className="w-8 h-8 rounded-full bg-zinc-700"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-zinc-300 font-medium">{winner.user}</span>
+                    <span className="text-zinc-500 font-mono text-xs">{winner.time}</span>
+                  </div>
                 </div>
                 <span className="font-bold font-mono text-yellow-400">
                   +${winner.win}

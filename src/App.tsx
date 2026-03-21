@@ -7,7 +7,7 @@ import { Navigation } from './components/Navigation';
 import { GameBoard } from './components/GameBoard';
 import { Controls } from './components/Controls';
 import { RecordsBoard } from './components/RecordsBoard';
-import { PlayRecord, WinnerRecord } from './types';
+import { PlayRecord, PlayboardRecord } from './types';
 import { mockBackendSpin, SpinReceipt } from './mockBackend';
 
 export const PAYTABLE: { id: IconName; weight: number; payout: number }[] = [
@@ -103,7 +103,7 @@ export default function App() {
   const [flyingCoins, setFlyingCoins] = useState<{id: number, startX: number, startY: number, targetX: number, targetY: number}[]>([]);
   
   const [records, setRecords] = useState<PlayRecord[]>([]);
-  const [winners, setWinners] = useState<WinnerRecord[]>([]);
+  const [winners, setWinners] = useState<PlayboardRecord[]>([]);
   const [activeTab, setActiveTab] = useState<'records' | 'winners'>('records');
 
   const [autoSpinsLeft, setAutoSpinsLeft] = useState(0);
@@ -197,14 +197,26 @@ export default function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const mockUsers = ['petercryptoguy', 'TJ_Diamond', 'lucky_dog', 'crypto_king', 'alice99', 'bob_builder'];
-      const newWinner = {
+      const mockUsers = [
+        { name: 'John', avatar: 'https://i.pravatar.cc/150?u=john', bio: 'Am the Grace and Mercy of THE GOD Of Zion.', location: 'Nigeria', joinDate: 'Joined October 2025' },
+        { name: 'Alice', avatar: 'https://i.pravatar.cc/150?u=alice', bio: 'Crypto enthusiast and slot lover.', location: 'USA', joinDate: 'Joined Jan 2026' },
+        { name: 'Bob', avatar: 'https://i.pravatar.cc/150?u=bob', bio: 'Just here for fun.', location: 'UK', joinDate: 'Joined Feb 2026' }
+      ];
+      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+      const isWin = Math.random() > 0.5;
+      
+      const newRecord: PlayboardRecord = {
         id: Math.random().toString(),
-        user: mockUsers[Math.floor(Math.random() * mockUsers.length)],
-        win: Math.floor(Math.random() * 500) + 10,
-        time: formatDate(new Date())
+        user: user.name,
+        avatar: user.avatar,
+        isWin,
+        winAmount: isWin ? Math.floor(Math.random() * 500) + 10 : 0,
+        time: isWin ? '2026/03/20' : '39m ago',
+        bio: user.bio,
+        location: user.location,
+        joinDate: user.joinDate
       };
-      setWinners(prev => [newWinner, ...prev].slice(0, 15));
+      setWinners(prev => [newRecord, ...prev].slice(0, 15));
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -418,9 +430,11 @@ export default function App() {
 
     const record: PlayRecord = {
       id: Math.random().toString(36).substr(2, 9),
-      time: formatDate(new Date()),
+      time: 'Just now',
       bet,
-      win: totalWin
+      win: totalWin,
+      playerName: 'John',
+      avatarUrl: 'https://i.pravatar.cc/150?u=john'
     };
     setRecords(prev => [record, ...prev].slice(0, 15));
 
