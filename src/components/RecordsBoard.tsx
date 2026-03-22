@@ -32,7 +32,7 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
         </button>
       </div>
       
-      <div className="p-4 flex-1 overflow-y-auto custom-scrollbar min-h-0">
+      <div className="p-4 flex-1 overflow-y-auto custom-scrollbar scrollbar-hide min-h-0">
         {activeTab === 'records' ? (
           records.length > 0 ? (
             <div className="space-y-2">

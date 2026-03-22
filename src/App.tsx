@@ -507,8 +507,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-zinc-950 to-black text-white font-sans flex flex-col items-center overflow-y-auto overflow-x-hidden scrollbar-hide">
-      <div className="shrink-0 w-full">
+    <div className="h-[100dvh] w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-zinc-950 to-black text-white font-sans flex flex-col overflow-hidden">
+      <div className="shrink-0 z-50 bg-zinc-950">
         <Navigation 
           isSpinning={isSpinning} 
           soundEnabled={soundEnabled} 
@@ -523,10 +523,11 @@ export default function App() {
         />
       </div>
 
-      <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-2 md:px-4 my-2 md:my-auto py-2 md:py-4 flex flex-col md:flex-row gap-2 md:gap-4 lg:gap-6 items-center md:items-stretch justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center py-2 md:py-4">
+        <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-2 md:px-4 my-2 md:my-4 flex flex-col md:flex-row gap-4 md:gap-4 lg:gap-6 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
         {/* Main Game Area */}
-        <div className="flex-1 w-full flex flex-col gap-1 md:gap-3 justify-center min-w-0">
+        <div className="flex-1 w-full flex flex-col gap-3 md:gap-4 md:justify-center min-w-0">
           {backendError && (
             <div className="bg-red-900/80 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm text-center shrink-0">
               {backendError}
@@ -630,8 +631,9 @@ export default function App() {
         </div>
 
       </div>
+    </div>
 
-      {/* Win Overlay */}
+    {/* Win Overlay */}
       <AnimatePresence>
         {(winLevel === 'big' || winLevel === 'mega') && (
           <motion.div
