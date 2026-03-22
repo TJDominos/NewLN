@@ -223,21 +223,29 @@ export const Controls: React.FC<ControlsProps> = ({
             <button
               onClick={() => {
                 if (autoSpinsSelected > 0) {
-                  setAutoSpinsLeft(autoSpinsSelected);
+                  const selected = autoSpinsSelected;
+                  setAutoSpinsLeft(selected);
                   setAutoSpinsSelected(0);
                   if (!isSpinning) {
                     spin();
-                    setAutoSpinsLeft(autoSpinsSelected - 1);
+                    setAutoSpinsLeft(selected - 1);
                   }
                 } else {
                   spin();
+                }
+              }}
+              onTouchStart={(e) => {
+                // Prevent double trigger on some devices but allow interaction
+                if (!isSpinning && balance >= bet) {
+                  // We don't preventDefault here to allow the click to still fire if needed
+                  // but we could if we wanted to be strictly touch-first
                 }
               }}
               disabled={isSpinning || balance < bet}
               className={`flex-1 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base tracking-widest uppercase transition-all
                 ${isSpinning || balance < bet 
                   ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed border border-zinc-700' 
-                  : 'bg-gradient-to-r from-emerald-500 to-emerald-400 text-zinc-950 hover:from-emerald-400 hover:to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.2)] hover:shadow-[0_0_25px_rgba(52,211,153,0.4)] active:scale-95'
+                  : 'bg-gradient-to-r from-emerald-500 to-emerald-400 text-zinc-950 hover:from-emerald-400 hover:to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.2)] hover:shadow-[0_0_25px_rgba(52,211,153,0.4)] active:scale-95 cursor-pointer'
                 }
               `}
             >

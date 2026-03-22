@@ -16,6 +16,7 @@ html, body {
   font-family: var(--font-sans);
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
+  overscroll-behavior: none;
 }
 
 html::-webkit-scrollbar, body::-webkit-scrollbar {
@@ -60,12 +61,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 
 @keyframes reel-blur {
-  0% { transform: translateY(-40%); filter: blur(2px); opacity: 0.6; }
-  100% { transform: translateY(40%); filter: blur(2px); opacity: 0.6; }
+  0% { transform: translateY(-40%) translateZ(0); filter: blur(2px); opacity: 0.6; }
+  100% { transform: translateY(40%) translateZ(0); filter: blur(2px); opacity: 0.6; }
 }
 
 .animate-reel {
   animation: reel-blur 0.1s linear infinite;
+  will-change: transform;
 }
 
 @keyframes shake {

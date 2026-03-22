@@ -244,17 +244,19 @@ export default function App() {
   const spin = async () => {
     if (isSpinning || (balance < bet && freeSpinsLeft === 0)) return;
     
-    // Initialize sound manager on first user interaction
+    // Initialize sound manager on first user interaction - don't await it to prevent UI lag
     soundManager.soundEnabled = soundEnabled;
-    await soundManager.init();
+    soundManager.init().catch(e => console.error("Sound init failed", e));
     
     setIsSpinning(true);
-    setSpinningCols([!heldCols[0], !heldCols[1], !heldCols[2]]);
+    const currentHeldCols = [...heldCols];
+    setSpinningCols([!currentHeldCols[0], !currentHeldCols[1], !currentHeldCols[2]]);
     
     if (freeSpinsLeft > 0) {
       setFreeSpinsLeft(prev => prev - 1);
     } else {
       setBalance(prev => prev - bet);
+      balanceRef.current -= bet;
       setProgressivePool(prev => prev + bet * 0.09); 
     }
     
@@ -265,7 +267,7 @@ export default function App() {
     setBackendError(null);
 
     // Start the visual spinning and sound immediately
-    if (!heldCols.every(h => h)) {
+    if (!currentHeldCols.every(h => h)) {
       startSpinSound(soundEnabled);
     }
     const intervalTime = 100;
@@ -281,7 +283,7 @@ export default function App() {
       setGrid(prevGrid => {
         const newGrid = [...prevGrid.map(row => [...row])];
         for (let col = 0; col < 3; col++) {
-          if (!heldCols[col]) {
+          if (!currentHeldCols[col]) {
             if (!backendReceipt || elapsed < backendFinishedTime + 500 + col * 500) {
               anySpinning = true;
               for (let row = 0; row < 3; row++) {
@@ -523,11 +525,11 @@ export default function App() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center py-2 md:py-4">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center py-2 md:py-4 pb-12">
         <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-2 md:px-4 my-2 md:my-4 flex flex-col md:flex-row gap-4 md:gap-4 lg:gap-6 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
         {/* Main Game Area */}
-        <div className="flex-1 w-full flex flex-col gap-3 md:gap-4 md:justify-center min-w-0">
+        <div className="flex-1 w-full flex flex-col gap-4 md:gap-6 justify-start min-w-0">
           {backendError && (
             <div className="bg-red-900/80 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm text-center shrink-0">
               {backendError}
@@ -535,7 +537,7 @@ export default function App() {
           )}
 
           {/* Progressive Jackpot & Free Spins */}
-          <div className="w-full flex gap-2 md:h-14 shrink-0">
+          <div className="w-full flex gap-3 h-14 md:h-16 shrink-0">
             <div className="flex-1 bg-gradient-to-b from-yellow-600 to-yellow-900 rounded-xl p-[2px] shadow-[0_0_20px_rgba(234,179,8,0.15)]">
               <div className="bg-zinc-950 rounded-lg p-2 px-4 flex justify-between items-center border border-yellow-500/30 h-full">
                 <p className="text-yellow-500 text-[10px] md:text-sm font-semibold uppercase tracking-widest">Jackpot</p>
@@ -578,7 +580,7 @@ export default function App() {
           </div>
 
           {/* GameBoard */}
-          <div ref={reelsRef} className="flex-1 flex items-center justify-center min-h-0 py-2 md:py-0">
+          <div ref={reelsRef} className="flex-1 flex items-center justify-center min-h-[300px] md:min-h-[400px] py-2 md:py-0">
             <div className="w-full max-w-sm md:max-w-[400px] mx-auto">
               <GameBoard 
                 grid={grid} 
