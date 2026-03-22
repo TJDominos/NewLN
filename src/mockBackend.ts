@@ -113,6 +113,7 @@ export const mockBackendSpin = async (
   while (true) {
     let stepWin = 0;
     const winningLines: number[][] = [];
+    let hasJackpotInStep = false;
     
     // Evaluate Lines
     LINES.forEach(line => {
@@ -136,14 +137,23 @@ export const mockBackendSpin = async (
       if (isWin) {
         winningSymbol = winningSymbol || 'wild';
         const payoutMultiplier = PAYTABLE.find(s => s.id === winningSymbol)?.payout || 0;
-        stepWin += bet * payoutMultiplier * multiplier;
         
-        if (winningSymbol === 'five' || winningSymbol === 'wild') jackpotWon = true;
+        // 5s and Wilds (Jackpots) do NOT use the cascade multiplier
+        const isJackpot = winningSymbol === 'five' || winningSymbol === 'wild';
+        const currentMultiplier = isJackpot ? 1 : multiplier;
+        
+        stepWin += bet * payoutMultiplier * currentMultiplier;
+        
+        if (isJackpot) {
+          jackpotWon = true;
+          hasJackpotInStep = true;
+        }
         
         winningLines.push([
           line[0][0], line[0][1],
           line[1][0], line[1][1],
-          line[2][0], line[2][1]
+          line[2][0], line[2][1],
+          isJackpot ? 1 : 0 // Add a flag to indicate if this line is a jackpot
         ]);
       }
     });
@@ -158,35 +168,48 @@ export const mockBackendSpin = async (
     const nextGrid = currentGrid.map(row => [...row]);
     const winningPositions = new Set<string>();
     winningLines.forEach(line => {
-      for (let i = 0; i < line.length; i += 2) {
-        winningPositions.add(`${line[i]},${line[i+1]}`);
+      const isJackpot = line[6] === 1;
+      // 5s and Wilds (Jackpots) do NOT disappear (no cascade for them)
+      if (!isJackpot) {
+        for (let i = 0; i < 6; i += 2) {
+          winningPositions.add(`${line[i]},${line[i+1]}`);
+        }
       }
     });
 
-    for (let c = 0; c < 3; c++) {
-      const remainingSymbols = [];
-      for (let r = 0; r < 3; r++) {
-        if (!winningPositions.has(`${r},${c}`)) {
-          remainingSymbols.push(nextGrid[r][c]);
+    // If there were only jackpot wins, no symbols will disappear
+    if (winningPositions.size > 0) {
+      for (let c = 0; c < 3; c++) {
+        const remainingSymbols = [];
+        for (let r = 0; r < 3; r++) {
+          if (!winningPositions.has(`${r},${c}`)) {
+            remainingSymbols.push(nextGrid[r][c]);
+          }
         }
-      }
-      const newSymbolsCount = 3 - remainingSymbols.length;
-      const newSymbols = Array.from({ length: newSymbolsCount }, () => generateSymbol());
-      const finalColumn = [...newSymbols, ...remainingSymbols];
-      
-      for (let r = 0; r < 3; r++) {
-        nextGrid[r][c] = finalColumn[r];
+        const newSymbolsCount = 3 - remainingSymbols.length;
+        const newSymbols = Array.from({ length: newSymbolsCount }, () => generateSymbol());
+        const finalColumn = [...newSymbols, ...remainingSymbols];
+        
+        for (let r = 0; r < 3; r++) {
+          nextGrid[r][c] = finalColumn[r];
+        }
       }
     }
 
     cascades.push({
       grid: nextGrid.map(row => [...row]),
-      winningLines,
+      winningLines: winningLines.map(l => l.slice(0, 6)), // Clean up the flag for the frontend
       stepWin,
       multiplier
     });
 
     currentGrid = nextGrid;
+    
+    // If a jackpot was hit, the cascade stops immediately
+    if (hasJackpotInStep) {
+      break;
+    }
+
     multiplier++;
 
     // Safety break

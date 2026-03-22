@@ -66,25 +66,43 @@ const LINES = [
 ];
 
 export const calculateRTP = () => {
-  let totalRTP = 0;
   const wildWeight = PAYTABLE.find(s => s.id === 'wild')?.weight || 0;
   const pw = wildWeight / TOTAL_WEIGHT;
 
+  let regularBaseRTP = 0;
+  let jackpotBaseRTP = 0;
+  let totalLineProb = 0;
+
   PAYTABLE.forEach(symbol => {
+    const px = symbol.weight / TOTAL_WEIGHT;
+    let probLine = 0;
+    
     if (symbol.id === 'wild') {
-      const probLine = Math.pow(pw, 3);
-      totalRTP += probLine * symbol.payout * LINES.length;
+      probLine = Math.pow(pw, 3);
+      jackpotBaseRTP += probLine * symbol.payout * LINES.length;
     } else {
-      const px = symbol.weight / TOTAL_WEIGHT;
-      const probLine = Math.pow(px + pw, 3) - Math.pow(pw, 3);
-      totalRTP += probLine * symbol.payout * LINES.length;
+      probLine = Math.pow(px + pw, 3) - Math.pow(pw, 3);
+      if (symbol.id === 'five') {
+        jackpotBaseRTP += probLine * symbol.payout * LINES.length;
+      } else {
+        regularBaseRTP += probLine * symbol.payout * LINES.length;
+      }
     }
+    totalLineProb += probLine;
   });
+
+  // Calculate Hit Frequency (H) - chance of at least one line hitting
+  const hitFrequency = 1 - Math.pow(1 - totalLineProb, LINES.length);
   
-  // Add 9% progressive jackpot contribution
-  totalRTP += 0.09;
+  // Calculate Cascade Boost (G4)
+  // Formula: 1 + (H * 2) + (H^2 * 3) + (H^3 * 5)
+  // Note: This is an approximation for the multiplier effect
+  const cascadeBoost = 1 + (hitFrequency * 2) + (Math.pow(hitFrequency, 2) * 3) + (Math.pow(hitFrequency, 3) * 5);
   
-  return (totalRTP * 100).toFixed(2) + '%';
+  // Effective RTP = (Regular_RTP * CascadeBoost) + Jackpot_RTP + 0.09
+  const effectiveRTP = (regularBaseRTP * cascadeBoost) + jackpotBaseRTP + 0.09;
+  
+  return (effectiveRTP * 100).toFixed(2) + '%';
 };
 
 const formatDate = (date: Date) => {
