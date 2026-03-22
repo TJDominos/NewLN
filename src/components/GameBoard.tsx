@@ -59,13 +59,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   }, [showRtpInfo]);
 
   return (
-    <div className="relative w-full bg-zinc-900 p-2 rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.15)] border-2 border-yellow-600/30">
+    <div className="relative w-full bg-zinc-900 p-1 md:p-2 rounded-2xl md:rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.15)] border-2 border-yellow-600/30">
       <div className="absolute -top-3 right-4 z-30" ref={rtpRef}>
         <button 
           onClick={() => setShowRtpInfo(!showRtpInfo)}
-          className="bg-zinc-950 border border-yellow-600/50 px-3 py-1 rounded-full text-xs text-yellow-500 font-mono shadow-md flex items-center gap-1 hover:bg-zinc-900 transition-colors"
+          className="bg-zinc-950 border border-yellow-600/50 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs text-yellow-500 font-mono shadow-md flex items-center gap-1 hover:bg-zinc-900 transition-colors"
         >
-          RTP: {rtp} <ChevronDown size={12} className={`transition-transform duration-200 ${showRtpInfo ? 'rotate-180' : ''}`} />
+          RTP: {rtp} <ChevronDown size={10} className={`md:w-3 md:h-3 transition-transform duration-200 ${showRtpInfo ? 'rotate-180' : ''}`} />
         </button>
 
         <AnimatePresence>
@@ -74,21 +74,21 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-full right-0 sm:-right-4 mt-2 w-[280px] sm:w-[320px] bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden z-40"
+              className="absolute top-full right-0 sm:-right-4 mt-2 w-[260px] sm:w-[320px] bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden z-40"
             >
-              <div className="p-3 bg-zinc-900/50 border-b border-zinc-800">
-                <p className="text-[10px] text-zinc-400 leading-relaxed text-center">
+              <div className="p-2 md:p-3 bg-zinc-900/50 border-b border-zinc-800">
+                <p className="text-[9px] md:text-[10px] text-zinc-400 leading-relaxed text-center">
                   Base RTP <span className="text-yellow-500 font-mono">(Excludes Cascades)</span>
                 </p>
               </div>
-              <div className="p-2">
-                <table className="w-full table-fixed text-[10px] sm:text-xs text-center">
+              <div className="p-1 md:p-2">
+                <table className="w-full table-fixed text-[9px] sm:text-xs text-center">
                   <thead>
                     <tr className="text-zinc-500 border-b border-zinc-800">
-                      <th className="pb-2 font-medium w-1/4">Sym</th>
-                      <th className="pb-2 font-medium w-1/4">Spin Odds</th>
-                      <th className="pb-2 font-medium w-1/4">Payout</th>
-                      <th className="pb-2 font-medium w-1/4">RTP %</th>
+                      <th className="pb-1 md:pb-2 font-medium w-1/4">Sym</th>
+                      <th className="pb-1 md:pb-2 font-medium w-1/4">Spin Odds</th>
+                      <th className="pb-1 md:pb-2 font-medium w-1/4">Payout</th>
+                      <th className="pb-1 md:pb-2 font-medium w-1/4">RTP %</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -124,35 +124,35 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
                       return (
                         <tr key={item.id} className="border-b border-zinc-800/50 last:border-0">
-                          <td className="py-2 flex justify-center items-center">
-                            <PixelIcon name={item.id} size={16} />
+                          <td className="py-1 md:py-2 flex justify-center items-center">
+                            <PixelIcon name={item.id} size={14} className="md:w-4 md:h-4" />
                           </td>
-                          <td className="py-2 font-mono text-emerald-400">{oddsStr}</td>
-                          <td className="py-2 font-mono text-yellow-500">{`${item.payout}x`}</td>
-                          <td className="py-2 font-mono text-blue-400">{rtpContrib.toFixed(2)}%</td>
+                          <td className="py-1 md:py-2 font-mono text-emerald-400">{oddsStr}</td>
+                          <td className="py-1 md:py-2 font-mono text-yellow-500">{`${item.payout}x`}</td>
+                          <td className="py-1 md:py-2 font-mono text-blue-400">{rtpContrib.toFixed(2)}%</td>
                         </tr>
                       );
                     })}
                     <tr className="border-b border-zinc-800/50 last:border-0">
-                      <td className="py-2 flex justify-center items-center">
-                        <span className="text-yellow-500 font-bold text-[10px]">PROG</span>
+                      <td className="py-1 md:py-2 flex justify-center items-center">
+                        <span className="text-yellow-500 font-bold text-[9px] md:text-[10px]">PROG</span>
                       </td>
-                      <td className="py-2 font-mono text-emerald-400">Every Spin</td>
-                      <td className="py-2 font-mono text-yellow-500">Pool</td>
-                      <td className="py-2 font-mono text-blue-400">9.00%</td>
+                      <td className="py-1 md:py-2 font-mono text-emerald-400">Every Spin</td>
+                      <td className="py-1 md:py-2 font-mono text-yellow-500">Pool</td>
+                      <td className="py-1 md:py-2 font-mono text-blue-400">9.00%</td>
                     </tr>
                   </tbody>
                   <tfoot>
                     <tr className="text-zinc-300 font-bold border-t border-zinc-700">
-                      <td className="py-2 text-right pr-4" colSpan={3}>Total Base RTP</td>
-                      <td className="py-2 font-mono text-blue-400">
+                      <td className="py-1 md:py-2 text-right pr-2 md:pr-4" colSpan={3}>Total Base RTP</td>
+                      <td className="py-1 md:py-2 font-mono text-blue-400">
                         {rtp}
                       </td>
                     </tr>
                   </tfoot>
                 </table>
 
-                <div className="mt-4 pt-3 border-t border-zinc-800 text-[10px] sm:text-xs text-zinc-400 text-left space-y-2 px-2 pb-2">
+                <div className="mt-2 pt-2 border-t border-zinc-800 text-[9px] md:text-xs text-zinc-400 text-left space-y-1 md:space-y-2 px-1 md:px-2 pb-1 md:pb-2">
                   <p><strong className="text-purple-400">Wild (W):</strong> Substitutes for all symbols.</p>
                   <p><strong className="text-yellow-500">Cascades & Multiplier:</strong> Winning symbols disappear, and new ones drop in. Each consecutive cascade increases your win multiplier by 1x!</p>
                   <p><strong className="text-emerald-400">Hold Column:</strong> After a spin, you can choose to "Hold" 1 or 2 columns, locking them in place for the next spin to improve your chances of winning.</p>
@@ -164,9 +164,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </AnimatePresence>
       </div>
       
-      <div className="relative grid grid-cols-3 gap-x-1 gap-y-0 bg-zinc-950 p-1 rounded-2xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mt-2 overflow-hidden border border-zinc-800">
+      <div className="relative grid grid-cols-3 gap-x-0.5 md:gap-x-1 gap-y-0 bg-zinc-950 p-0.5 md:p-1 rounded-xl md:rounded-2xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mt-1 md:mt-2 overflow-hidden border border-zinc-800">
         {/* Subtle inner shadow for depth, without dimming the top/bottom rows */}
-        <div className="absolute inset-0 pointer-events-none z-20 rounded-2xl shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" />
+        <div className="absolute inset-0 pointer-events-none z-20 rounded-xl md:rounded-2xl shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" />
         
         {[0, 1, 2].map(colIndex => (
           <div key={`col-${colIndex}`} className="flex flex-col gap-y-0 relative">
@@ -193,7 +193,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                     `}
                   >
                     <div className={`transition-all duration-75 flex items-center justify-center w-full h-full ${spinningCols[colIndex] ? 'animate-reel' : 'blur-0 scale-100 opacity-100 translate-y-0'}`}>
-                      <PixelIcon name={symbol.name} size={96} className="drop-shadow-lg w-full h-full p-2" />
+                      <PixelIcon name={symbol.name} size={96} className="drop-shadow-lg w-full h-full p-1 md:p-2" />
                     </div>
                     {isWinningCell && (
                       <motion.div 
@@ -211,13 +211,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       </div>
 
       {/* Hold Buttons */}
-      <div className="grid grid-cols-3 gap-x-1 mt-2 px-1">
+      <div className="grid grid-cols-3 gap-x-0.5 md:gap-x-1 mt-1 md:mt-2 px-0.5 md:px-1">
         {[0, 1, 2].map(colIndex => (
           <button
             key={`hold-${colIndex}`}
             onClick={() => handleHoldClick(colIndex)}
             className={`
-              py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold uppercase tracking-widest transition-all
+              py-1 md:py-2 rounded-lg text-[10px] md:text-sm font-bold uppercase tracking-widest transition-all
               ${heldCols[colIndex] 
                 ? 'bg-yellow-500 text-zinc-900 shadow-[0_0_10px_rgba(234,179,8,0.5)] border border-yellow-400' 
                 : 'bg-zinc-800 text-zinc-500 border border-zinc-700'}

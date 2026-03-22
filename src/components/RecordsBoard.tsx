@@ -32,12 +32,12 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
         </button>
       </div>
       
-      <div className="p-4 flex-1 overflow-y-auto custom-scrollbar scrollbar-hide min-h-0">
+      <div className="p-4 flex-1 overflow-y-auto custom-scrollbar scrollbar-hide overscroll-contain min-h-0">
         {activeTab === 'records' ? (
           records.length > 0 ? (
             <div className="space-y-2">
               {records.map(record => (
-                <div key={record.id} className="grid grid-cols-[120px_1fr_80px] items-center p-3 bg-zinc-800/50 rounded-xl text-sm gap-2">
+                <div key={record.id} className="grid grid-cols-[120px_1fr_80px] items-center p-3 bg-zinc-800/50 rounded-xl text-sm gap-2 will-change-transform">
                   <span className="text-zinc-400 font-mono text-xs text-left whitespace-nowrap">{record.time}</span>
                   <span className="text-zinc-300 text-center">Bet: {record.bet}</span>
                   <div className="flex flex-col items-end">
@@ -57,7 +57,7 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
         ) : (
           <div className="space-y-2">
             {winners.map(winner => (
-              <div key={winner.id} className="flex justify-between items-center p-3 bg-zinc-800/50 rounded-xl text-sm">
+              <div key={winner.id} className="flex justify-between items-center p-3 bg-zinc-800/50 rounded-xl text-sm will-change-transform">
                 <div className="flex items-center gap-3">
                   <img 
                     src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${winner.user}`} 

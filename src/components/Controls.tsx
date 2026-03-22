@@ -110,17 +110,17 @@ export const Controls: React.FC<ControlsProps> = ({
   }, [showAutoMenu, setShowAutoMenu]);
 
   return (
-    <div className="w-full bg-zinc-900 rounded-2xl p-4 md:p-6 shadow-xl border border-zinc-800">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2" ref={balanceRef}>
-          <span className="text-zinc-500 text-[10px] uppercase tracking-wider font-semibold">Balance</span>
-          <span className="text-lg font-mono font-bold text-emerald-400 flex items-center gap-1">
-            <Coins size={14} /> {balance.toFixed(2)}
+    <div className="w-full bg-zinc-900 rounded-2xl p-2 md:p-6 shadow-xl border border-zinc-800">
+      <div className="flex justify-between items-center mb-2 md:mb-4 px-1">
+        <div className="flex items-center gap-1.5 md:gap-2" ref={balanceRef}>
+          <span className="text-zinc-500 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold">Balance</span>
+          <span className="text-base md:text-lg font-mono font-bold text-emerald-400 flex items-center gap-1">
+            <Coins size={12} className="md:w-3.5 md:h-3.5" /> {balance.toFixed(2)}
           </span>
         </div>
-        <div className="flex items-center gap-2" ref={winAmountRef}>
-          <span className="text-slate-400 text-sm uppercase tracking-widest font-bold">Win</span>
-          <div className="relative h-8 flex items-center justify-end min-w-[80px]">
+        <div className="flex items-center gap-1.5 md:gap-2" ref={winAmountRef}>
+          <span className="text-slate-400 text-xs md:text-sm uppercase tracking-widest font-bold">Win</span>
+          <div className="relative h-6 md:h-8 flex items-center justify-end min-w-[60px] md:min-w-[80px]">
             <AnimatePresence mode="wait">
               {winAmount > 0 ? (
                 <motion.span 
@@ -128,7 +128,7 @@ export const Controls: React.FC<ControlsProps> = ({
                   initial={{ scale: 0.5, opacity: 0, y: 10 }}
                   animate={{ scale: [1.2, 1], opacity: 1, y: 0 }}
                   exit={{ scale: 0.5, opacity: 0, y: -10 }}
-                  className="text-2xl font-mono font-bold text-yellow-400 [text-shadow:1px_1px_0_#dc2626,-1px_-1px_0_#dc2626,1px_-1px_0_#dc2626,-1px_1px_0_#dc2626,0_0_15px_#dc2626]"
+                  className="text-xl md:text-2xl font-mono font-bold text-yellow-400 [text-shadow:1px_1px_0_#dc2626,-1px_-1px_0_#dc2626,1px_-1px_0_#dc2626,-1px_1px_0_#dc2626,0_0_15px_#dc2626]"
                 >
                   +{winAmount.toFixed(2)}
                 </motion.span>
@@ -138,7 +138,7 @@ export const Controls: React.FC<ControlsProps> = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-xl font-mono font-bold text-zinc-600"
+                  className="text-lg md:text-xl font-mono font-bold text-zinc-600"
                 >
                   0.00
                 </motion.span>
@@ -149,31 +149,31 @@ export const Controls: React.FC<ControlsProps> = ({
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
-        <div className="flex-1 bg-zinc-800 rounded-xl p-1.5 md:p-2 flex items-center justify-between border border-zinc-700/50">
+        <div className="flex-1 bg-zinc-800 rounded-xl p-1 md:p-2 flex items-center justify-between border border-zinc-700/50">
           <button 
             onClick={handleMinus}
             disabled={isSpinning || bet <= 1 || autoSpinsLeft > 0}
-            className="p-2 bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
+            className="p-1.5 md:p-2 bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
           >
-            <Minus size={16} />
+            <Minus size={14} className="md:w-4 md:h-4" />
           </button>
-          <div className="flex flex-col items-center px-1">
-            <span className="text-zinc-500 text-[9px] md:text-[11px] uppercase tracking-wider font-bold">Bet</span>
+          <div className="flex flex-col items-center px-0.5">
+            <span className="text-zinc-500 text-[8px] md:text-[11px] uppercase tracking-wider font-bold">Bet</span>
             <input
               type="number"
               value={inputValue}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
               disabled={isSpinning || autoSpinsLeft > 0}
-              className="w-12 md:w-16 bg-transparent text-center text-base md:text-xl font-mono font-bold outline-none text-white disabled:opacity-50"
+              className="w-10 md:w-16 bg-transparent text-center text-sm md:text-xl font-mono font-bold outline-none text-white disabled:opacity-50"
             />
           </div>
           <button 
             onClick={handlePlus}
             disabled={isSpinning || bet >= 100 || bet >= balance || autoSpinsLeft > 0}
-            className="p-2 bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
+            className="p-1.5 md:p-2 bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
           >
-            <Plus size={16} />
+            <Plus size={14} className="md:w-4 md:h-4" />
           </button>
         </div>
 
@@ -181,19 +181,19 @@ export const Controls: React.FC<ControlsProps> = ({
           <div className="flex-1 flex justify-center items-center">
             <button
               onClick={stopAutoSpins}
-              className="w-14 h-14 rounded-full bg-red-600 hover:bg-red-500 border-4 border-red-800 shadow-[0_0_15px_rgba(220,38,38,0.5)] flex items-center justify-center text-white font-bold text-xl transition-transform active:scale-95"
+              className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-red-600 hover:bg-red-500 border-4 border-red-800 shadow-[0_0_15px_rgba(220,38,38,0.5)] flex items-center justify-center text-white font-bold text-lg md:text-xl transition-transform active:scale-95"
             >
               {autoSpinsLeft}
             </button>
           </div>
         ) : (
-          <div className="flex-1 flex gap-2 relative" ref={autoMenuRef}>
+          <div className="flex-1 flex gap-1.5 md:gap-2 relative" ref={autoMenuRef}>
             <button
               onClick={() => setShowAutoMenu(!showAutoMenu)}
               disabled={isSpinning}
-              className="px-3 bg-zinc-800 rounded-xl border border-zinc-700 hover:bg-zinc-700 disabled:opacity-50 transition flex items-center justify-center text-zinc-300"
+              className="px-2.5 md:px-3 bg-zinc-800 rounded-xl border border-zinc-700 hover:bg-zinc-700 disabled:opacity-50 transition flex items-center justify-center text-zinc-300"
             >
-              <RefreshCw size={18} />
+              <RefreshCw size={16} className="md:w-[18px] md:h-[18px]" />
             </button>
             
             <AnimatePresence>
@@ -242,7 +242,7 @@ export const Controls: React.FC<ControlsProps> = ({
                 }
               }}
               disabled={isSpinning || balance < bet}
-              className={`flex-1 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base tracking-widest uppercase transition-all
+              className={`flex-1 py-3.5 md:py-4 rounded-xl font-bold text-sm md:text-base tracking-widest uppercase transition-all
                 ${isSpinning || balance < bet 
                   ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed border border-zinc-700' 
                   : 'bg-gradient-to-r from-emerald-500 to-emerald-400 text-zinc-950 hover:from-emerald-400 hover:to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.2)] hover:shadow-[0_0_25px_rgba(52,211,153,0.4)] active:scale-95 cursor-pointer'

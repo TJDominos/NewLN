@@ -61,6 +61,16 @@ class SoundManager {
     }
   }
 
+  async resume() {
+    if (this.ctx && this.ctx.state === 'suspended') {
+      try {
+        await this.ctx.resume();
+      } catch (e) {
+        console.error("AudioContext resume failed", e);
+      }
+    }
+  }
+
   async generateSounds() {
     if (!this.ctx) return;
     
@@ -283,6 +293,10 @@ class SoundManager {
 
   play(name: string, loop = false) {
     if (!this.soundEnabled || !this.ctx || !this.buffers[name]) return null;
+    
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(e => console.error("AudioContext resume failed in play", e));
+    }
     
     const source = this.ctx.createBufferSource();
     source.buffer = this.buffers[name];
