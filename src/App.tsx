@@ -43,6 +43,17 @@ const generateSymbol = (): SymbolData => ({
   name: getRandomSymbol()
 });
 
+const getFormattedTime = () => {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  return `${yy}${mm}${dd} ${hh}:${min}:${ss}`;
+};
+
 const LINES = [
   [[0,0], [0,1], [0,2]], 
   [[1,0], [1,1], [1,2]], 
@@ -211,7 +222,7 @@ export default function App() {
         avatar: user.avatar,
         isWin,
         winAmount: isWin ? Math.floor(Math.random() * 500) + 10 : 0,
-        time: isWin ? '2026/03/20' : '39m ago',
+        time: getFormattedTime(),
         bio: user.bio,
         location: user.location,
         joinDate: user.joinDate
@@ -362,6 +373,7 @@ export default function App() {
         setTimeout(() => {
           setGrid(step.grid);
           setWinningLines([]);
+          setCascadeMultiplier(step.multiplier + 1);
           playSound('spin', soundEnabled);
           
           currentStepIndex++;
@@ -388,13 +400,13 @@ export default function App() {
       playSound('win_mega', soundEnabled);
     } else if (totalWin > 0) {
       const winRatio = totalWin / bet;
-      if (winRatio >= 50) {
+      if (winRatio >= 500) {
         currentWinLevel = 'mega';
         playSound('win_mega', soundEnabled);
-      } else if (winRatio >= 15) {
+      } else if (winRatio >= 100) {
         currentWinLevel = 'big';
         playSound('win_big', soundEnabled);
-      } else if (winRatio > 5) {
+      } else if (winRatio >= 20) {
         currentWinLevel = 'medium';
         playSound('win_medium', soundEnabled);
       } else if (winRatio >= 5) {
@@ -430,7 +442,7 @@ export default function App() {
 
     const record: PlayRecord = {
       id: Math.random().toString(36).substr(2, 9),
-      time: 'Just now',
+      time: getFormattedTime(),
       bet,
       win: totalWin,
       playerName: 'John',
@@ -495,113 +507,127 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-zinc-950 to-black text-white font-sans flex flex-col items-center pb-8 overflow-x-hidden">
-      <Navigation 
-        isSpinning={isSpinning} 
-        soundEnabled={soundEnabled} 
-        onExit={handleExit} 
-        onToggleSound={async () => {
-          const newState = !soundEnabled;
-          setSoundEnabled(newState);
-          soundManager.soundEnabled = newState;
-          await soundManager.init();
-          soundManager.setBgm(newState);
-        }} 
-      />
+    <div className="min-h-[100dvh] w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-zinc-950 to-black text-white font-sans flex flex-col items-center overflow-y-auto overflow-x-hidden scrollbar-hide">
+      <div className="shrink-0 w-full">
+        <Navigation 
+          isSpinning={isSpinning} 
+          soundEnabled={soundEnabled} 
+          onExit={handleExit} 
+          onToggleSound={async () => {
+            const newState = !soundEnabled;
+            setSoundEnabled(newState);
+            soundManager.soundEnabled = newState;
+            await soundManager.init();
+            soundManager.setBgm(newState);
+          }} 
+        />
+      </div>
 
-      <div className={`w-full max-w-sm px-4 mt-4 flex flex-col gap-4 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
+      <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-2 md:px-4 my-2 md:my-auto py-2 md:py-4 flex flex-col md:flex-row gap-2 md:gap-4 lg:gap-6 items-center md:items-stretch justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
-        {backendError && (
-          <div className="bg-red-900/80 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm text-center">
-            {backendError}
-          </div>
-        )}
-
-        {/* Progressive Jackpot & Free Spins */}
-        <div className="w-full flex gap-2">
-          <div className="flex-1 bg-gradient-to-b from-yellow-600 to-yellow-900 rounded-xl p-[2px] shadow-[0_0_20px_rgba(234,179,8,0.15)]">
-            <div className="bg-zinc-950 rounded-lg p-2 px-4 flex justify-between items-center border border-yellow-500/30 h-full">
-              <p className="text-yellow-500 text-[10px] font-semibold uppercase tracking-widest">Jackpot</p>
-              <p className="text-xl font-mono font-bold text-yellow-400">
-                ${(bet * 1000 + progressivePool).toFixed(2)}
-              </p>
+        {/* Main Game Area */}
+        <div className="flex-1 w-full flex flex-col gap-1 md:gap-3 justify-center min-w-0">
+          {backendError && (
+            <div className="bg-red-900/80 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm text-center shrink-0">
+              {backendError}
             </div>
-          </div>
-          
-          <AnimatePresence>
-            {cascadeMultiplier > 1 && (
+          )}
+
+          {/* Progressive Jackpot & Free Spins */}
+          <div className="w-full flex gap-2 md:h-14 shrink-0">
+            <div className="flex-1 bg-gradient-to-b from-yellow-600 to-yellow-900 rounded-xl p-[2px] shadow-[0_0_20px_rgba(234,179,8,0.15)]">
+              <div className="bg-zinc-950 rounded-lg p-2 px-4 flex justify-between items-center border border-yellow-500/30 h-full">
+                <p className="text-yellow-500 text-[10px] md:text-sm font-semibold uppercase tracking-widest">Jackpot</p>
+                <p className="text-xl md:text-2xl font-mono font-bold text-yellow-400">
+                  ${(bet * 1000 + progressivePool).toFixed(2)}
+                </p>
+              </div>
+            </div>
+            
+            <AnimatePresence>
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="bg-gradient-to-b from-blue-600 to-blue-900 rounded-xl p-[2px] shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                className={`bg-gradient-to-b ${cascadeMultiplier > 1 ? 'from-blue-600 to-blue-900 shadow-[0_0_20px_rgba(59,130,246,0.3)]' : 'from-zinc-800 to-zinc-900'} rounded-xl p-[2px] transition-all duration-300`}
               >
-                <div className="bg-zinc-950 rounded-lg p-2 px-4 flex flex-col justify-center items-center border border-blue-500/30 h-full min-w-[60px]">
-                  <p className="text-blue-400 text-[10px] font-semibold uppercase tracking-widest">Multi</p>
-                  <p className="text-xl font-mono font-bold text-blue-300">
+                <div className={`bg-zinc-950 rounded-lg p-2 px-4 flex flex-col justify-center items-center border ${cascadeMultiplier > 1 ? 'border-blue-500/30' : 'border-zinc-800'} h-full min-w-[60px] md:min-w-[80px] transition-colors duration-300`}>
+                  <p className={`${cascadeMultiplier > 1 ? 'text-blue-400' : 'text-zinc-600'} text-[10px] md:text-xs font-semibold uppercase tracking-widest transition-colors duration-300`}>Multi</p>
+                  <p className={`text-xl md:text-xl font-mono font-bold ${cascadeMultiplier > 1 ? 'text-blue-300' : 'text-zinc-500'} transition-colors duration-300`}>
                     {cascadeMultiplier}x
                   </p>
                 </div>
               </motion.div>
-            )}
-            {freeSpinsLeft > 0 && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="bg-gradient-to-b from-purple-600 to-purple-900 rounded-xl p-[2px] shadow-[0_0_20px_rgba(168,85,247,0.3)]"
-              >
-                <div className="bg-zinc-950 rounded-lg p-2 px-4 flex flex-col justify-center items-center border border-purple-500/30 h-full min-w-[80px]">
-                  <p className="text-purple-400 text-[10px] font-semibold uppercase tracking-widest">Free</p>
-                  <p className="text-xl font-mono font-bold text-purple-300">
-                    {freeSpinsLeft}
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              {freeSpinsLeft > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="bg-gradient-to-b from-purple-600 to-purple-900 rounded-xl p-[2px] shadow-[0_0_20px_rgba(168,85,247,0.3)]"
+                >
+                  <div className="bg-zinc-950 rounded-lg p-2 px-4 flex flex-col justify-center items-center border border-purple-500/30 h-full min-w-[80px] md:min-w-[100px]">
+                    <p className="text-purple-400 text-[10px] md:text-xs font-semibold uppercase tracking-widest">Free</p>
+                    <p className="text-xl md:text-xl font-mono font-bold text-purple-300">
+                      {freeSpinsLeft}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* GameBoard */}
+          <div ref={reelsRef} className="flex-1 flex items-center justify-center min-h-0 py-2 md:py-0">
+            <div className="w-full max-w-sm md:max-w-[400px] mx-auto">
+              <GameBoard 
+                grid={grid} 
+                winningLines={winningLines} 
+                spinningCols={spinningCols} 
+                winAmount={winAmount} 
+                isSpinning={isSpinning} 
+                rtp={calculateRTP()} 
+                paytable={PAYTABLE}
+                heldCols={heldCols}
+                toggleHold={toggleHold}
+                canHold={canHold}
+              />
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="shrink-0">
+            <Controls 
+              balance={balance}
+              winAmount={winAmount}
+              bet={bet}
+              setBet={handleSetBet}
+              isSpinning={isSpinning}
+              autoSpinsLeft={autoSpinsLeft}
+              stopAutoSpins={stopAutoSpins}
+              showAutoMenu={showAutoMenu}
+              setShowAutoMenu={setShowAutoMenu}
+              selectAutoSpins={selectAutoSpins}
+              autoSpinsSelected={autoSpinsSelected}
+              setAutoSpinsLeft={setAutoSpinsLeft}
+              setAutoSpinsSelected={setAutoSpinsSelected}
+              spin={spin}
+              balanceRef={balanceRef}
+              winAmountRef={winAmountRef}
+            />
+          </div>
         </div>
 
-        <div ref={reelsRef}>
-          <GameBoard 
-            grid={grid} 
-            winningLines={winningLines} 
-            spinningCols={spinningCols} 
-            winAmount={winAmount} 
-            isSpinning={isSpinning} 
-            rtp={calculateRTP()} 
-            paytable={PAYTABLE}
-            heldCols={heldCols}
-            toggleHold={toggleHold}
-            canHold={canHold}
-          />
+        {/* Sidebar Area */}
+        <div className="w-full md:w-80 lg:w-96 flex flex-col shrink-0 h-[140px] md:h-auto relative">
+          <div className="w-full h-full md:absolute md:inset-0 flex flex-col">
+            <RecordsBoard 
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              records={records}
+              winners={winners}
+            />
+          </div>
         </div>
-
-        <Controls 
-          balance={balance}
-          winAmount={winAmount}
-          bet={bet}
-          setBet={handleSetBet}
-          isSpinning={isSpinning}
-          autoSpinsLeft={autoSpinsLeft}
-          stopAutoSpins={stopAutoSpins}
-          showAutoMenu={showAutoMenu}
-          setShowAutoMenu={setShowAutoMenu}
-          selectAutoSpins={selectAutoSpins}
-          autoSpinsSelected={autoSpinsSelected}
-          setAutoSpinsLeft={setAutoSpinsLeft}
-          setAutoSpinsSelected={setAutoSpinsSelected}
-          spin={spin}
-          balanceRef={balanceRef}
-          winAmountRef={winAmountRef}
-        />
-
-        <RecordsBoard 
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          records={records}
-          winners={winners}
-        />
 
       </div>
 

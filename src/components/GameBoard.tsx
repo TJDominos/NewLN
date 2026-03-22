@@ -217,7 +217,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             key={`hold-${colIndex}`}
             onClick={() => handleHoldClick(colIndex)}
             className={`
-              py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all
+              py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold uppercase tracking-widest transition-all
               ${heldCols[colIndex] 
                 ? 'bg-yellow-500 text-zinc-900 shadow-[0_0_10px_rgba(234,179,8,0.5)] border border-yellow-400' 
                 : 'bg-zinc-800 text-zinc-500 border border-zinc-700'}

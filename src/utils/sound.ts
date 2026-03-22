@@ -41,6 +41,13 @@ class SoundManager {
     
     this.ctx = new AudioContextClass();
     
+    // Unlock audio on iOS by playing a silent buffer immediately
+    const buffer = this.ctx.createBuffer(1, 1, 22050);
+    const source = this.ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(this.ctx.destination);
+    source.start(0);
+
     if (this.ctx.state === 'suspended') {
       await this.ctx.resume();
     }

@@ -1,12 +1,12 @@
 import React from 'react';
 import { History, Users } from 'lucide-react';
-import { PlayRecord, WinnerRecord } from '../types';
+import { PlayRecord, PlayboardRecord } from '../types';
 
 interface RecordsBoardProps {
   activeTab: 'records' | 'winners';
   setActiveTab: (tab: 'records' | 'winners') => void;
   records: PlayRecord[];
-  winners: WinnerRecord[];
+  winners: PlayboardRecord[];
 }
 
 export const RecordsBoard: React.FC<RecordsBoardProps> = ({
@@ -16,8 +16,8 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
   winners,
 }) => {
   return (
-    <div className="w-full bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 shadow-xl">
-      <div className="flex border-b border-zinc-800">
+    <div className="w-full bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 shadow-xl flex flex-col h-full">
+      <div className="flex border-b border-zinc-800 shrink-0">
         <button 
           onClick={() => setActiveTab('records')}
           className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors ${activeTab === 'records' ? 'bg-zinc-800 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
@@ -32,7 +32,7 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
         </button>
       </div>
       
-      <div className="p-4 h-64 overflow-y-auto custom-scrollbar">
+      <div className="p-4 flex-1 overflow-y-auto custom-scrollbar min-h-0">
         {activeTab === 'records' ? (
           records.length > 0 ? (
             <div className="space-y-2">
@@ -40,9 +40,12 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
                 <div key={record.id} className="grid grid-cols-[120px_1fr_80px] items-center p-3 bg-zinc-800/50 rounded-xl text-sm gap-2">
                   <span className="text-zinc-400 font-mono text-xs text-left whitespace-nowrap">{record.time}</span>
                   <span className="text-zinc-300 text-center">Bet: {record.bet}</span>
-                  <span className={`font-bold font-mono text-right ${record.win > 0 ? 'text-emerald-400' : 'text-zinc-500'}`}>
-                    {record.win > 0 ? `+${record.win}` : '0'}
-                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-0.5">Net</span>
+                    <span className={`font-bold font-mono text-right leading-none ${record.win - record.bet > 0 ? 'text-emerald-400' : record.win - record.bet < 0 ? 'text-red-400' : 'text-zinc-500'}`}>
+                      {record.win - record.bet > 0 ? `+${record.win - record.bet}` : record.win - record.bet}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -68,7 +71,7 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
                   </div>
                 </div>
                 <span className="font-bold font-mono text-yellow-400">
-                  +${winner.win}
+                  +${winner.winAmount}
                 </span>
               </div>
             ))}

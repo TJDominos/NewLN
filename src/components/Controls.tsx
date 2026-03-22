@@ -110,8 +110,8 @@ export const Controls: React.FC<ControlsProps> = ({
   }, [showAutoMenu, setShowAutoMenu]);
 
   return (
-    <div className="w-full bg-zinc-900 rounded-2xl p-4 shadow-xl border border-zinc-800">
-      <div className="flex justify-between items-center mb-3">
+    <div className="w-full bg-zinc-900 rounded-2xl p-4 md:p-6 shadow-xl border border-zinc-800">
+      <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2" ref={balanceRef}>
           <span className="text-zinc-500 text-[10px] uppercase tracking-wider font-semibold">Balance</span>
           <span className="text-lg font-mono font-bold text-emerald-400 flex items-center gap-1">
@@ -148,8 +148,8 @@ export const Controls: React.FC<ControlsProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex-1 bg-zinc-800 rounded-xl p-1.5 flex items-center justify-between border border-zinc-700/50">
+      <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex-1 bg-zinc-800 rounded-xl p-1.5 md:p-2 flex items-center justify-between border border-zinc-700/50">
           <button 
             onClick={handleMinus}
             disabled={isSpinning || bet <= 1 || autoSpinsLeft > 0}
@@ -158,14 +158,14 @@ export const Controls: React.FC<ControlsProps> = ({
             <Minus size={16} />
           </button>
           <div className="flex flex-col items-center px-1">
-            <span className="text-zinc-500 text-[9px] uppercase tracking-wider font-bold">Bet</span>
+            <span className="text-zinc-500 text-[9px] md:text-[11px] uppercase tracking-wider font-bold">Bet</span>
             <input
               type="number"
               value={inputValue}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
               disabled={isSpinning || autoSpinsLeft > 0}
-              className="w-12 bg-transparent text-center text-base font-mono font-bold outline-none text-white disabled:opacity-50"
+              className="w-12 md:w-16 bg-transparent text-center text-base md:text-xl font-mono font-bold outline-none text-white disabled:opacity-50"
             />
           </div>
           <button 
@@ -234,7 +234,7 @@ export const Controls: React.FC<ControlsProps> = ({
                 }
               }}
               disabled={isSpinning || balance < bet}
-              className={`flex-1 py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all
+              className={`flex-1 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base tracking-widest uppercase transition-all
                 ${isSpinning || balance < bet 
                   ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed border border-zinc-700' 
                   : 'bg-gradient-to-r from-emerald-500 to-emerald-400 text-zinc-950 hover:from-emerald-400 hover:to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.2)] hover:shadow-[0_0_25px_rgba(52,211,153,0.4)] active:scale-95'
