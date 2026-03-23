@@ -61,13 +61,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 
 @keyframes reel-blur {
-  0% { transform: translateY(-40%) translateZ(0); filter: blur(2px); opacity: 0.6; }
-  100% { transform: translateY(40%) translateZ(0); filter: blur(2px); opacity: 0.6; }
+  0% { transform: translateY(0) scaleY(1.5); filter: blur(3px); opacity: 0.9; }
+  100% { transform: translateY(100%) scaleY(1.5); filter: blur(3px); opacity: 0.9; }
 }
 
 .animate-reel {
   animation: reel-blur 0.1s linear infinite;
-  will-change: transform;
+  will-change: transform, filter;
 }
 
 .will-change-transform {

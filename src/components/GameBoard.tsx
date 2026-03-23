@@ -192,7 +192,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                       ${isWinningCell ? 'ring-2 ring-yellow-400 z-10 bg-zinc-800 shadow-[0_0_15px_rgba(234,179,8,0.5)]' : ''}
                     `}
                   >
-                    <div className={`transition-all duration-75 flex items-center justify-center w-full h-full ${spinningCols[colIndex] ? 'animate-reel' : 'blur-0 scale-100 opacity-100 translate-y-0'}`}>
+                    <div className={`transition-all duration-150 ease-out flex flex-col items-center justify-center w-full h-full ${spinningCols[colIndex] ? 'animate-reel' : 'blur-0 scale-100 opacity-100 translate-y-0'}`}>
+                      {spinningCols[colIndex] && (
+                        <>
+                          <div className="absolute top-[-100%] w-full h-full flex items-center justify-center">
+                            <PixelIcon name={symbol.name} size={96} className="drop-shadow-lg w-full h-full p-1 md:p-2" />
+                          </div>
+                          <div className="absolute top-[100%] w-full h-full flex items-center justify-center">
+                            <PixelIcon name={symbol.name} size={96} className="drop-shadow-lg w-full h-full p-1 md:p-2" />
+                          </div>
+                        </>
+                      )}
                       <PixelIcon name={symbol.name} size={96} className="drop-shadow-lg w-full h-full p-1 md:p-2" />
                     </div>
                     {isWinningCell && (
