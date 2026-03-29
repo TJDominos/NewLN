@@ -148,8 +148,6 @@ export default function App() {
 
   const handleSetBet = (newBet: number) => {
     setBet(newBet);
-    setHeldCols([false, false, false]);
-    setCanHold(false);
   };
 
   const balanceRefValue = useRef(balance);
