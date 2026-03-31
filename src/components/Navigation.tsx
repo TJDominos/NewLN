@@ -11,7 +11,7 @@ interface NavigationProps {
 export const Navigation: React.FC<NavigationProps> = ({ isSpinning, soundEnabled, onExit, onToggleSound }) => {
   return (
     <>
-      <nav className="w-full bg-zinc-900 border-b border-zinc-800 p-2 md:p-4 z-30 flex justify-between items-center shadow-md">
+      <nav className="w-full bg-zinc-900 border-b border-zinc-800 p-1.5 md:p-3 z-30 flex justify-between items-center shadow-md">
         <button 
           onClick={onExit}
           disabled={isSpinning}

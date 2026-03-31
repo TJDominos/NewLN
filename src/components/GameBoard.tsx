@@ -59,7 +59,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   }, [showRtpInfo]);
 
   return (
-    <div className="relative w-full bg-zinc-900 p-1 md:p-2 rounded-2xl md:rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.15)] border-2 border-yellow-600/30">
+    <div className="relative w-full bg-zinc-900 p-1 md:p-1.5 rounded-2xl md:rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.15)] border-2 border-yellow-600/30">
       <div className="absolute -top-3 right-4 z-30" ref={rtpRef}>
         <button 
           onClick={() => setShowRtpInfo(!showRtpInfo)}
@@ -164,7 +164,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </AnimatePresence>
       </div>
       
-      <div className="relative grid grid-cols-3 gap-x-0.5 md:gap-x-1 gap-y-0 bg-zinc-950 p-0.5 md:p-1 rounded-xl md:rounded-2xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mt-1 md:mt-2 overflow-hidden border border-zinc-800">
+      <div className="relative grid grid-cols-3 gap-x-0.5 md:gap-x-1 gap-y-0 bg-zinc-950 p-0.5 md:p-1 rounded-xl md:rounded-2xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] mt-1 md:mt-1 overflow-hidden border border-zinc-800">
         {/* Subtle inner shadow for depth, without dimming the top/bottom rows */}
         <div className="absolute inset-0 pointer-events-none z-20 rounded-xl md:rounded-2xl shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]" />
         

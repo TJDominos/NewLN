@@ -562,23 +562,23 @@ export default function App() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain flex flex-col items-center py-0.5 md:py-4 pb-12 md:pb-4">
-        <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-1.5 md:px-4 my-0.5 md:my-4 flex flex-col md:flex-row gap-1.5 md:gap-4 lg:gap-6 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain flex flex-col items-center py-0.5 md:py-1 pb-12 md:pb-1">
+        <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-1.5 md:px-2 my-0.5 md:my-1 flex flex-col md:flex-row gap-1.5 md:gap-2 lg:gap-4 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
         {/* Main Game Area */}
-        <div className="flex-1 w-full flex flex-col gap-1.5 md:gap-6 justify-start min-w-0">
+        <div className="w-full max-w-[min(100%,350px,50vh)] md:max-w-[min(100%,450px,60vh)] mx-auto flex flex-col gap-1.5 md:gap-2 lg:gap-3 justify-start min-w-0">
           {backendError && (
-            <div className="bg-red-900/80 border border-red-500 text-red-200 px-4 py-0.5 rounded-lg text-[10px] text-center shrink-0">
+            <div className="w-full bg-red-900/80 border border-red-500 text-red-200 px-4 py-0.5 rounded-lg text-[10px] text-center shrink-0">
               {backendError}
             </div>
           )}
 
           {/* Progressive Jackpot & Free Spins */}
-          <div className="w-full flex gap-1.5 h-10 md:h-16 shrink-0">
-            <div className="flex-1 bg-gradient-to-b from-yellow-600 to-yellow-900 rounded-xl p-[1px] shadow-[0_0_15px_rgba(234,179,8,0.1)]">
-              <div className="bg-zinc-950 rounded-lg p-1 px-2 flex justify-between items-center border border-yellow-500/30 h-full">
-                <p className="text-yellow-500 text-[8px] md:text-sm font-semibold uppercase tracking-widest">Jackpot</p>
-                <p className="text-base md:text-2xl font-mono font-bold text-yellow-400">
+          <div className="w-full flex gap-1.5 h-8 md:h-10 shrink-0">
+            <div className="w-[70%] md:w-[75%] bg-gradient-to-b from-yellow-600 to-yellow-900 rounded-xl p-[1px] shadow-[0_0_15px_rgba(234,179,8,0.1)]">
+              <div className="bg-zinc-950 rounded-lg p-1 px-2 md:px-3 flex justify-between items-center border border-yellow-500/30 h-full">
+                <p className="text-yellow-500 text-[8px] md:text-xs font-semibold uppercase tracking-widest whitespace-nowrap">Jackpot</p>
+                <p className="text-sm md:text-lg font-mono font-bold text-yellow-400 whitespace-nowrap ml-1">
                   ${(bet * 1000 + progressivePool).toFixed(2)}
                 </p>
               </div>
@@ -589,11 +589,11 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className={`bg-gradient-to-b ${cascadeMultiplier > 1 ? 'from-blue-600 to-blue-900 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'from-zinc-800 to-zinc-900'} rounded-xl p-[1px] transition-all duration-300`}
+                className={`flex-1 bg-gradient-to-b ${cascadeMultiplier > 1 ? 'from-blue-600 to-blue-900 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'from-zinc-800 to-zinc-900'} rounded-xl p-[1px] transition-all duration-300 min-w-0`}
               >
-                <div className={`bg-zinc-950 rounded-lg p-1 px-2 flex flex-col justify-center items-center border ${cascadeMultiplier > 1 ? 'border-blue-500/30' : 'border-zinc-800'} h-full min-w-[45px] md:min-w-[80px] transition-colors duration-300`}>
-                  <p className={`${cascadeMultiplier > 1 ? 'text-blue-400' : 'text-zinc-600'} text-[7px] md:text-xs font-semibold uppercase tracking-widest transition-colors duration-300`}>Multi</p>
-                  <p className={`text-base md:text-xl font-mono font-bold ${cascadeMultiplier > 1 ? 'text-blue-300' : 'text-zinc-500'} transition-colors duration-300`}>
+                <div className={`bg-zinc-950 rounded-lg p-1 px-1.5 md:px-2 flex flex-row justify-center items-center gap-1 border ${cascadeMultiplier > 1 ? 'border-blue-500/30' : 'border-zinc-800'} h-full transition-colors duration-300`}>
+                  <p className={`${cascadeMultiplier > 1 ? 'text-blue-400' : 'text-zinc-600'} text-[8px] md:text-[10px] font-semibold uppercase tracking-widest transition-colors duration-300 whitespace-nowrap`}>Multi</p>
+                  <p className={`text-xs md:text-sm font-mono font-bold ${cascadeMultiplier > 1 ? 'text-blue-300' : 'text-zinc-500'} transition-colors duration-300 whitespace-nowrap`}>
                     {cascadeMultiplier}x
                   </p>
                 </div>
@@ -603,11 +603,11 @@ export default function App() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="bg-gradient-to-b from-purple-600 to-purple-900 rounded-xl p-[1px] shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+                  className="flex-1 bg-gradient-to-b from-purple-600 to-purple-900 rounded-xl p-[1px] shadow-[0_0_15px_rgba(168,85,247,0.2)] min-w-0"
                 >
-                  <div className="bg-zinc-950 rounded-lg p-1 px-2 flex flex-col justify-center items-center border border-purple-500/30 h-full min-w-[50px] md:min-w-[100px]">
-                    <p className="text-purple-400 text-[7px] md:text-xs font-semibold uppercase tracking-widest">Free</p>
-                    <p className="text-base md:text-xl font-mono font-bold text-purple-300">
+                  <div className="bg-zinc-950 rounded-lg p-1 px-1.5 md:px-2 flex flex-row justify-center items-center gap-1 border border-purple-500/30 h-full">
+                    <p className="text-purple-400 text-[8px] md:text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap">Free</p>
+                    <p className="text-xs md:text-sm font-mono font-bold text-purple-300 whitespace-nowrap">
                       {freeSpinsLeft}
                     </p>
                   </div>
@@ -617,8 +617,8 @@ export default function App() {
           </div>
 
           {/* GameBoard */}
-          <div ref={reelsRef} className="flex-1 flex items-center justify-center min-h-[400px] md:min-h-[450px] py-0.5 md:py-0">
-            <div className="w-full max-w-[360px] md:max-w-[450px] mx-auto">
+          <div ref={reelsRef} className="w-full flex items-center justify-center min-h-0 py-0.5 md:py-0">
+            <div className="w-full">
               <GameBoard 
                 grid={grid} 
                 winningLines={winningLines} 
@@ -635,7 +635,7 @@ export default function App() {
           </div>
 
           {/* Controls */}
-          <div className="shrink-0">
+          <div className="w-full shrink-0">
             <Controls 
               balance={balance}
               winAmount={winAmount}
@@ -658,7 +658,7 @@ export default function App() {
         </div>
 
         {/* Sidebar Area */}
-        <div className="w-full md:w-80 lg:w-96 flex flex-col shrink-0 h-[60vh] md:h-auto relative pb-8 md:pb-0">
+        <div className="w-full max-w-[min(100%,350px,50vh)] md:max-w-[min(100%,450px,60vh)] mx-auto flex flex-col shrink-0 h-[60vh] md:h-auto relative pb-8 md:pb-0">
           <div className="w-full h-full md:absolute md:inset-0 flex flex-col">
             <RecordsBoard 
               activeTab={activeTab}
