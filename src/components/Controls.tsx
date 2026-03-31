@@ -153,7 +153,7 @@ export const Controls: React.FC<ControlsProps> = ({
           <button 
             onClick={handleMinus}
             disabled={isSpinning || bet <= 1 || autoSpinsLeft > 0}
-            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
+            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-default transition"
           >
             <Minus size={14} className="md:w-4 md:h-4" />
           </button>
@@ -170,7 +170,7 @@ export const Controls: React.FC<ControlsProps> = ({
           <button 
             onClick={handlePlus}
             disabled={isSpinning || bet >= 100 || bet >= balance || autoSpinsLeft > 0}
-            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 transition"
+            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-default transition"
           >
             <Plus size={14} className="md:w-4 md:h-4" />
           </button>
@@ -190,7 +190,7 @@ export const Controls: React.FC<ControlsProps> = ({
             <button
               onClick={() => setShowAutoMenu(!showAutoMenu)}
               disabled={isSpinning}
-              className="px-2.5 md:px-3 h-full bg-zinc-800 rounded-xl border border-zinc-700 hover:bg-zinc-700 disabled:opacity-50 transition flex items-center justify-center text-zinc-300"
+              className="px-2.5 md:px-3 h-full bg-zinc-800 rounded-xl border border-zinc-700 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-default transition flex items-center justify-center text-zinc-300"
             >
               <RefreshCw size={16} className="md:w-[18px] md:h-[18px]" />
             </button>
@@ -243,7 +243,7 @@ export const Controls: React.FC<ControlsProps> = ({
               disabled={isSpinning || balance < bet}
               className={`flex-1 h-full rounded-xl font-bold text-sm md:text-base tracking-widest uppercase transition-all
                 ${isSpinning || balance < bet 
-                  ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed border border-zinc-700' 
+                  ? 'bg-zinc-800 text-zinc-600 border border-zinc-700 cursor-default' 
                   : 'bg-gradient-to-r from-emerald-500 to-emerald-400 text-zinc-950 hover:from-emerald-400 hover:to-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.2)] hover:shadow-[0_0_25px_rgba(52,211,153,0.4)] active:scale-95 cursor-pointer'
                 }
               `}

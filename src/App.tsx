@@ -545,8 +545,18 @@ export default function App() {
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-zinc-950 to-black text-white font-sans flex flex-col overflow-hidden">
-      <div className="shrink-0 z-50 bg-zinc-950">
+    <div className="h-[100dvh] w-full bg-[#0a0502] text-white font-sans flex flex-col overflow-hidden relative">
+      {/* Atmospheric background */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute inset-0" style={{
+          background: 'radial-gradient(circle at 50% 0%, #3a1510 0%, transparent 60%), radial-gradient(circle at 10% 80%, #ff4e00 0%, transparent 40%), radial-gradient(circle at 90% 80%, #8b5cf6 0%, transparent 40%)',
+          filter: 'blur(60px)',
+          opacity: 0.6
+        }} />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgMTBoNDBNMTAgMHY0ME0wIDIwaDQwTTIwIDB2NDBNMCAzMGg0ME0zMCAwdjQwIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4=')] opacity-20" />
+      </div>
+
+      <div className="shrink-0 z-50 bg-zinc-950/80 backdrop-blur-md border-b border-white/5 relative">
         <Navigation 
           isSpinning={isSpinning} 
           soundEnabled={soundEnabled} 
@@ -562,7 +572,7 @@ export default function App() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain flex flex-col items-center py-0.5 md:py-1 pb-12 md:pb-1">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain flex flex-col items-center py-0.5 md:py-1 pb-12 md:pb-1 relative z-10">
         <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-1.5 md:px-2 my-0.5 md:my-1 flex flex-col md:flex-row gap-1.5 md:gap-2 lg:gap-4 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
         {/* Main Game Area */}
