@@ -572,8 +572,8 @@ export default function App() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain flex flex-col items-center py-0.5 md:py-1 pb-12 md:pb-1 relative z-10">
-        <div className={`w-full max-w-sm md:max-w-5xl lg:max-w-6xl px-1.5 md:px-2 my-0.5 md:my-1 flex flex-col md:flex-row gap-1.5 md:gap-2 lg:gap-4 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain flex flex-col items-center pt-[20px] pb-12 md:pb-1 relative z-10">
+        <div className={`w-full max-w-[1280px] px-1.5 md:px-2 flex flex-col md:flex-row gap-1.5 md:gap-2 lg:gap-4 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
         {/* Main Game Area */}
         <div className="w-full max-w-[min(100%,350px,50vh)] md:max-w-[min(100%,450px,60vh)] mx-auto flex flex-col gap-1.5 md:gap-2 lg:gap-3 justify-start min-w-0">
