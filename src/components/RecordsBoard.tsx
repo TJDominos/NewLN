@@ -1,6 +1,7 @@
 import React from 'react';
 import { History, Users } from 'lucide-react';
 import { PlayRecord, PlayboardRecord } from '../types';
+import { PixelIcon } from './PixelIcon';
 
 interface RecordsBoardProps {
   activeTab: 'records' | 'winners';
@@ -37,15 +38,36 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
           records.length > 0 ? (
             <div className="space-y-2">
               {records.map(record => (
-                <div key={record.id} className="grid grid-cols-[120px_1fr_80px] items-center p-3 bg-zinc-800/50 rounded-xl text-sm gap-2 will-change-transform">
-                  <span className="text-zinc-400 font-mono text-xs text-left whitespace-nowrap">{record.time}</span>
-                  <span className="text-zinc-300 text-center">Bet: {record.bet}</span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-0.5">Net</span>
-                    <span className={`font-bold font-mono text-right leading-none ${record.win - record.bet > 0 ? 'text-emerald-400' : record.win - record.bet < 0 ? 'text-red-400' : 'text-zinc-500'}`}>
-                      {record.win - record.bet > 0 ? `+${record.win - record.bet}` : record.win - record.bet}
-                    </span>
+                <div key={record.id} className="flex flex-col p-3 bg-zinc-800/50 rounded-xl text-sm gap-2 will-change-transform">
+                  <div className="grid grid-cols-[120px_1fr_80px] items-center gap-2">
+                    <span className="text-zinc-400 font-mono text-xs text-left whitespace-nowrap">{record.time}</span>
+                    <span className="text-zinc-300 text-center">Bet: {record.bet}</span>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-0.5">Net</span>
+                      <span className={`font-bold font-mono text-right leading-none ${record.win - record.bet > 0 ? 'text-emerald-400' : record.win - record.bet < 0 ? 'text-red-400' : 'text-zinc-500'}`}>
+                        {record.win - record.bet > 0 ? `+${record.win - record.bet}` : record.win - record.bet}
+                      </span>
+                    </div>
                   </div>
+                  {record.winDetails && record.winDetails.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      <span className="text-xs text-zinc-500">Win:</span>
+                      {record.winDetails.map((detail, idx) => (
+                        <div key={idx} className="flex items-center gap-1 bg-zinc-900/50 px-1.5 py-0.5 rounded border border-zinc-700/50">
+                          <span className="text-xs text-zinc-400">{detail.count}</span>
+                          <div className="w-4 h-4 flex items-center justify-center">
+                            <PixelIcon name={detail.symbol} size={16} />
+                          </div>
+                          {detail.lines > 1 && (
+                            <span className="text-[10px] font-bold text-zinc-300">x{detail.lines}</span>
+                          )}
+                          {detail.multiplier > 1 && (
+                            <span className="text-[10px] font-bold text-blue-400">Multi x{detail.multiplier}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

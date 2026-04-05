@@ -12,7 +12,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isSpinning, soundEnabled
   return (
     <>
       <nav className="w-full h-[60px] bg-zinc-900 border-b border-zinc-800 z-30 flex justify-center shadow-md">
-        <div className="w-full max-w-[1280px] px-3 md:px-6 h-full flex justify-between items-center relative">
+        <div className="w-full max-w-5xl px-3 md:px-6 h-full flex justify-between items-center relative">
           <button 
             onClick={onExit}
             disabled={isSpinning}

@@ -1,5 +1,12 @@
 import { IconName } from './components/PixelIcon';
 
+export interface WinDetail {
+  symbol: IconName;
+  count: number;
+  lines: number;
+  multiplier: number;
+}
+
 export interface PlayRecord {
   id: string;
   time: string;
@@ -7,6 +14,7 @@ export interface PlayRecord {
   win: number;
   playerName?: string;
   avatarUrl?: string;
+  winDetails?: WinDetail[];
 }
 
 export interface PlayboardRecord {

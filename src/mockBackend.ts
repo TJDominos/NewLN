@@ -1,11 +1,17 @@
 import { IconName } from './components/PixelIcon';
 import { SymbolData } from './App';
 
+export interface WinningSymbolInfo {
+  symbol: IconName;
+  lines: number;
+}
+
 export interface CascadeStep {
   grid: SymbolData[][];
   winningLines: number[][];
   stepWin: number;
   multiplier: number;
+  winningSymbols: WinningSymbolInfo[];
 }
 
 export interface SpinReceipt {
@@ -113,6 +119,7 @@ export const mockBackendSpin = async (
   while (true) {
     let stepWin = 0;
     const winningLines: number[][] = [];
+    const stepWinningSymbolsMap = new Map<IconName, number>();
     let hasJackpotInStep = false;
     
     // Evaluate Lines
@@ -148,6 +155,8 @@ export const mockBackendSpin = async (
           jackpotWon = true;
           hasJackpotInStep = true;
         }
+        
+        stepWinningSymbolsMap.set(winningSymbol, (stepWinningSymbolsMap.get(winningSymbol) || 0) + 1);
         
         winningLines.push([
           line[0][0], line[0][1],
@@ -196,11 +205,14 @@ export const mockBackendSpin = async (
       }
     }
 
+    const stepWinningSymbols: WinningSymbolInfo[] = Array.from(stepWinningSymbolsMap.entries()).map(([symbol, lines]) => ({ symbol, lines }));
+
     cascades.push({
       grid: nextGrid.map(row => [...row]),
       winningLines: winningLines.map(l => l.slice(0, 6)), // Clean up the flag for the frontend
       stepWin,
-      multiplier
+      multiplier,
+      winningSymbols: stepWinningSymbols
     });
 
     currentGrid = nextGrid;
