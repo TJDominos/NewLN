@@ -119,7 +119,17 @@ export default function App() {
   const [balance, setBalance] = useState(1000);
   const [bet, setBet] = useState(10);
   const [progressivePool, setProgressivePool] = useState(500);
-  const [grid, setGrid] = useState<SymbolData[][]>(() => Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => generateSymbol())));
+  const [grid, setGrid] = useState<SymbolData[][]>(() => {
+    const saved = localStorage.getItem('slotGrid');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved grid', e);
+      }
+    }
+    return Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => generateSymbol()));
+  });
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinningCols, setSpinningCols] = useState<boolean[]>([false, false, false]);
   const [winningLines, setWinningLines] = useState<number[][]>([]);
@@ -161,6 +171,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('slotSoundEnabled', String(soundEnabled));
   }, [soundEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('slotGrid', JSON.stringify(grid));
+  }, [grid]);
 
   useEffect(() => {
     const handleInteraction = async () => {
@@ -237,6 +251,7 @@ export default function App() {
         user: user.name,
         avatar: user.avatar,
         isWin,
+        // NOTE: winAmount represents the gross win amount, not the net amount (win - bet)
         winAmount: isWin ? Math.floor(Math.random() * 500) + 10 : 0,
         time: getFormattedTime(),
         bio: user.bio,

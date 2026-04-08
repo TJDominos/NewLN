@@ -20,8 +20,8 @@ export const Navigation: React.FC<NavigationProps> = ({ isSpinning, soundEnabled
           >
             <LogOut className="rotate-180 w-5 h-5 md:w-6 md:h-6" />
           </button>
-          <h1 className="text-base md:text-lg font-bold text-white absolute left-1/2 -translate-x-1/2 whitespace-nowrap">
-            Lucky Nickel
+          <h1 className="text-base md:text-lg font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] uppercase absolute left-1/2 -translate-x-1/2 whitespace-nowrap pr-1">
+            Fruits Garden
           </h1>
           <div className="flex items-center gap-2 md:gap-4">
             <button onClick={onToggleSound} className="text-zinc-400 hover:text-white transition">

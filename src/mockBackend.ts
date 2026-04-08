@@ -1,6 +1,35 @@
 import { IconName } from './components/PixelIcon';
 import { SymbolData } from './App';
 
+/**
+ * ==========================================
+ * BACKEND API CONTRACT
+ * ==========================================
+ * 
+ * This file mocks the backend API that the frontend expects.
+ * In a real implementation, the frontend would make HTTP requests to a backend server.
+ * 
+ * ENDPOINT: POST /api/spin
+ * 
+ * REQUEST PAYLOAD:
+ */
+export interface SpinRequest {
+  bet: number;                 // The amount bet on this spin
+  heldCols: boolean[];         // Array of 3 booleans indicating which columns are held (e.g., [false, true, false])
+  previousGrid: SymbolData[][];// The 3x3 grid from the previous spin (required if heldCols has any true values)
+}
+
+/**
+ * RESPONSE PAYLOAD:
+ */
+export interface SpinResponse {
+  initialGrid: SymbolData[][]; // The 3x3 grid generated for the initial spin (incorporating held columns)
+  cascades: CascadeStep[];     // Array of cascade steps (wins, disappearing symbols, new symbols falling)
+  totalWin: number;            // Total amount won across all cascades
+  freeSpinsAwarded: number;    // Number of free spins awarded (if any)
+  jackpotWon: boolean;         // Whether the progressive jackpot was won
+}
+
 export interface WinningSymbolInfo {
   symbol: IconName;
   lines: number;
@@ -14,13 +43,8 @@ export interface CascadeStep {
   winningSymbols: WinningSymbolInfo[];
 }
 
-export interface SpinReceipt {
-  initialGrid: SymbolData[][];
-  cascades: CascadeStep[];
-  totalWin: number;
-  freeSpinsAwarded: number;
-  jackpotWon: boolean;
-}
+// For backward compatibility with App.tsx
+export type SpinReceipt = SpinResponse;
 
 const PAYTABLE: { id: IconName; weight: number; payout: number }[] = [
   { id: 'cherry',     weight: 100,    payout: 1 },
@@ -66,14 +90,15 @@ const generateSymbol = (): SymbolData => ({
 
 /**
  * MOCK BACKEND ENGINE
- * This function simulates the Rust canister logic. It takes the bet and held columns,
- * generates the initial grid, and synchronously calculates all cascades in a single call.
+ * This function simulates the Rust canister logic. It takes the parameters defined in SpinRequest,
+ * generates the initial grid, and synchronously calculates all cascades in a single call,
+ * returning a SpinResponse.
  */
 export const mockBackendSpin = async (
   bet: number, 
   heldCols: boolean[], 
   previousGrid: SymbolData[][]
-): Promise<SpinReceipt> => {
+): Promise<SpinResponse> => {
   
   // --- BACKEND VALIDATION LOGIC ---
   if (!heldCols || heldCols.length !== 3) {

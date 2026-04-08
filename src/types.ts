@@ -22,6 +22,7 @@ export interface PlayboardRecord {
   user: string;
   avatar: string;
   isWin: boolean;
+  // NOTE: winAmount represents the gross win amount, not the net amount (win - bet)
   winAmount?: number;
   time: string;
   bio: string;

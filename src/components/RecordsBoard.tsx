@@ -78,7 +78,8 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
           )
         ) : (
           <div className="flex flex-col h-full">
-            <p className="text-xs text-zinc-500 text-center mb-3 shrink-0">Showing the latest 50 plays</p>
+            <p className="text-xs text-zinc-500 text-center mb-1 shrink-0">Showing the latest 50 plays</p>
+            <p className="text-[10px] text-zinc-600 text-center mb-3 shrink-0 italic">* Amounts shown are gross win amount, not net amount</p>
             <div className="space-y-2">
               {winners.map(winner => (
                 <div key={winner.id} className="flex justify-between items-center p-3 bg-zinc-800/50 rounded-xl text-sm will-change-transform">
