@@ -243,7 +243,7 @@ export default function App() {
         location: user.location,
         joinDate: user.joinDate
       };
-      setWinners(prev => [newRecord, ...prev].slice(0, 15));
+      setWinners(prev => [newRecord, ...prev].slice(0, 50));
     }, 5000);
     return () => clearInterval(interval);
   }, []);
