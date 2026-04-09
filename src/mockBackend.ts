@@ -1,5 +1,56 @@
 import { IconName } from './components/PixelIcon';
 import { SymbolData } from './App';
+import { PlayboardRecord } from './types';
+
+// Simulate a global database of records on the IC canister
+let globalRecordsIdCounter = 0;
+const globalRecords: PlayboardRecord[] = [];
+
+const getFormattedTime = () => {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  return `${yy}${mm}${dd} ${hh}:${min}:${ss}`;
+};
+
+// Helper to generate mock records in the background
+setInterval(() => {
+  const mockUsers = [
+    { name: 'John', avatar: 'https://i.pravatar.cc/150?u=john', bio: 'Am the Grace and Mercy of THE GOD Of Zion.', location: 'Nigeria', joinDate: 'Joined October 2025' },
+    { name: 'Alice', avatar: 'https://i.pravatar.cc/150?u=alice', bio: 'Crypto enthusiast and slot lover.', location: 'USA', joinDate: 'Joined Jan 2026' },
+    { name: 'Bob', avatar: 'https://i.pravatar.cc/150?u=bob', bio: 'Just here for fun.', location: 'UK', joinDate: 'Joined Feb 2026' }
+  ];
+  const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+  const isWin = Math.random() > 0.5;
+  
+  globalRecordsIdCounter++;
+  const newRecord: PlayboardRecord = {
+    id: globalRecordsIdCounter.toString(),
+    user: user.name,
+    avatar: user.avatar,
+    isWin,
+    winAmount: isWin ? Math.floor(Math.random() * 500) + 10 : 0,
+    time: getFormattedTime(),
+    bio: user.bio,
+    location: user.location,
+    joinDate: user.joinDate
+  };
+  
+  globalRecords.push(newRecord);
+  if (globalRecords.length > 100) {
+    globalRecords.shift();
+  }
+}, 5000);
+
+export const mockBackendGetRecords = async (lastId: string): Promise<PlayboardRecord[]> => {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  const lastIdNum = parseInt(lastId || '0', 10);
+  return globalRecords.filter(record => parseInt(record.id, 10) > lastIdNum);
+};
 
 /**
  * ==========================================

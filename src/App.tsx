@@ -8,7 +8,7 @@ import { GameBoard } from './components/GameBoard';
 import { Controls } from './components/Controls';
 import { RecordsBoard } from './components/RecordsBoard';
 import { PlayRecord, PlayboardRecord } from './types';
-import { mockBackendSpin, SpinReceipt, mockBackendGetConfig, GameConfigResponse, generateSymbol, getRandomSymbol } from './mockBackend';
+import { mockBackendSpin, SpinReceipt, mockBackendGetConfig, GameConfigResponse, generateSymbol, getRandomSymbol, mockBackendGetRecords } from './mockBackend';
 import { CommentsWidget } from './components/CommentsWidget';
 
 export type SymbolData = { id: string, name: IconName };
@@ -86,6 +86,7 @@ export default function App() {
 
   const balanceRefValue = useRef(balance);
   const betRefValue = useRef(bet);
+  const lastRecordIdRef = useRef('0');
 
   useEffect(() => {
     balanceRefValue.current = balance;
@@ -161,31 +162,35 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const mockUsers = [
-        { name: 'John', avatar: 'https://i.pravatar.cc/150?u=john', bio: 'Am the Grace and Mercy of THE GOD Of Zion.', location: 'Nigeria', joinDate: 'Joined October 2025' },
-        { name: 'Alice', avatar: 'https://i.pravatar.cc/150?u=alice', bio: 'Crypto enthusiast and slot lover.', location: 'USA', joinDate: 'Joined Jan 2026' },
-        { name: 'Bob', avatar: 'https://i.pravatar.cc/150?u=bob', bio: 'Just here for fun.', location: 'UK', joinDate: 'Joined Feb 2026' }
-      ];
-      const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
-      const isWin = Math.random() > 0.5;
-      
-      const newRecord: PlayboardRecord = {
-        id: Math.random().toString(),
-        user: user.name,
-        avatar: user.avatar,
-        isWin,
-        // NOTE: winAmount represents the gross win amount, not the net amount (win - bet)
-        winAmount: isWin ? Math.floor(Math.random() * 500) + 10 : 0,
-        time: getFormattedTime(),
-        bio: user.bio,
-        location: user.location,
-        joinDate: user.joinDate
-      };
-      setWinners(prev => [newRecord, ...prev].slice(0, 50));
-    }, 5000);
+    const fetchRecords = async () => {
+      try {
+        const newRecords = await mockBackendGetRecords(lastRecordIdRef.current);
+        if (newRecords.length > 0) {
+          // Update the lastRecordId to the highest ID received
+          const maxId = Math.max(...newRecords.map(r => parseInt(r.id, 10)));
+          lastRecordIdRef.current = maxId.toString();
+          
+          setWinners(prev => {
+            // Prepend new records (newest first) and keep only the latest 50
+            const combined = [...newRecords.reverse(), ...prev];
+            return combined.slice(0, 50);
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch records:", error);
+      }
+    };
+
+    // Do not poll while spinning to save performance
+    if (isSpinning) return;
+
+    // Fetch immediately on load or right after a spin finishes
+    fetchRecords();
+
+    // Poll every 30 seconds while idle
+    const interval = setInterval(fetchRecords, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isSpinning]);
 
   useEffect(() => {
     const handleFirstInteraction = async () => {
