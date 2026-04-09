@@ -73,7 +73,7 @@ const LINES = [
   [[2,0], [1,1], [0,2]]  
 ];
 
-const getRandomSymbol = (): IconName => {
+export const getRandomSymbol = (): IconName => {
   const rand = Math.random() * TOTAL_WEIGHT;
   let sum = 0;
   for (const item of PAYTABLE) {
@@ -83,10 +83,65 @@ const getRandomSymbol = (): IconName => {
   return PAYTABLE[0].id;
 };
 
-const generateSymbol = (): SymbolData => ({
+export const generateSymbol = (): SymbolData => ({
   id: Math.random().toString(36).substring(2, 9),
   name: getRandomSymbol()
 });
+
+export const calculateRTP = () => {
+  const wildWeight = PAYTABLE.find(s => s.id === 'wild')?.weight || 0;
+  const pw = wildWeight / TOTAL_WEIGHT;
+
+  let regularBaseRTP = 0;
+  let jackpotBaseRTP = 0;
+  let totalLineProb = 0;
+
+  PAYTABLE.forEach(symbol => {
+    const px = symbol.weight / TOTAL_WEIGHT;
+    let probLine = 0;
+    
+    if (symbol.id === 'wild') {
+      probLine = Math.pow(pw, 3);
+      jackpotBaseRTP += probLine * symbol.payout * LINES.length;
+    } else {
+      probLine = Math.pow(px + pw, 3) - Math.pow(pw, 3);
+      if (symbol.id === 'five') {
+        jackpotBaseRTP += probLine * symbol.payout * LINES.length;
+      } else {
+        regularBaseRTP += probLine * symbol.payout * LINES.length;
+      }
+    }
+    totalLineProb += probLine;
+  });
+
+  // Calculate Hit Frequency (H) - chance of at least one line hitting
+  const hitFrequency = 1 - Math.pow(1 - totalLineProb, LINES.length);
+  
+  // Calculate Cascade Boost (G4)
+  // Formula: 1 + (H * 2) + (H^2 * 3) + (H^3 * 5)
+  // Note: This is an approximation for the multiplier effect
+  const cascadeBoost = 1 + (hitFrequency * 2) + (Math.pow(hitFrequency, 2) * 3) + (Math.pow(hitFrequency, 3) * 5);
+  
+  // Effective RTP = (Regular_RTP * CascadeBoost) + Jackpot_RTP + 0.09
+  const effectiveRTP = (regularBaseRTP * cascadeBoost) + jackpotBaseRTP + 0.09;
+  
+  return (effectiveRTP * 100).toFixed(2) + '%';
+};
+
+export interface GameConfigResponse {
+  paytable: { id: IconName; weight: number; payout: number }[];
+  rtp: string;
+}
+
+export const mockBackendGetConfig = async (): Promise<GameConfigResponse> => {
+  // Simulate network latency
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  return {
+    paytable: PAYTABLE,
+    rtp: calculateRTP()
+  };
+};
 
 /**
  * MOCK BACKEND ENGINE

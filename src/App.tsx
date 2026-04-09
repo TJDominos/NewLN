@@ -8,40 +8,10 @@ import { GameBoard } from './components/GameBoard';
 import { Controls } from './components/Controls';
 import { RecordsBoard } from './components/RecordsBoard';
 import { PlayRecord, PlayboardRecord } from './types';
-import { mockBackendSpin, SpinReceipt } from './mockBackend';
-
-export const PAYTABLE: { id: IconName; weight: number; payout: number }[] = [
-  { id: 'cherry',     weight: 100,    payout: 1 },
-  { id: 'banana',     weight: 74.74,  payout: 2 },
-  { id: 'lemon',      weight: 50.87,  payout: 5 },
-  { id: 'orange',     weight: 38.02,  payout: 10 },
-  { id: 'grape',      weight: 32.07,  payout: 15 },
-  { id: 'strawberry', weight: 21.24,  payout: 40 },
-  { id: 'apple',      weight: 14.45,  payout: 100 },
-  { id: 'watermelon', weight: 9.84,   payout: 250 },
-  { id: 'star',       weight: 7.35,   payout: 500 },
-  { id: 'five',       weight: 3.76,   payout: 1000 },
-  { id: 'wild',       weight: 0.3,    payout: 2000 }
-];
+import { mockBackendSpin, SpinReceipt, mockBackendGetConfig, GameConfigResponse, generateSymbol, getRandomSymbol } from './mockBackend';
+import { CommentsWidget } from './components/CommentsWidget';
 
 export type SymbolData = { id: string, name: IconName };
-
-const TOTAL_WEIGHT = PAYTABLE.reduce((sum, item) => sum + item.weight, 0);
-
-const getRandomSymbol = (): IconName => {
-  const rand = Math.random() * TOTAL_WEIGHT;
-  let sum = 0;
-  for (const item of PAYTABLE) {
-    sum += item.weight;
-    if (rand <= sum) return item.id;
-  }
-  return PAYTABLE[0].id;
-};
-
-const generateSymbol = (): SymbolData => ({
-  id: Math.random().toString(36).substr(2, 9),
-  name: getRandomSymbol()
-});
 
 const getFormattedTime = () => {
   const now = new Date();
@@ -52,57 +22,6 @@ const getFormattedTime = () => {
   const min = String(now.getMinutes()).padStart(2, '0');
   const ss = String(now.getSeconds()).padStart(2, '0');
   return `${yy}${mm}${dd} ${hh}:${min}:${ss}`;
-};
-
-const LINES = [
-  [[0,0], [0,1], [0,2]], 
-  [[1,0], [1,1], [1,2]], 
-  [[2,0], [2,1], [2,2]], 
-  [[0,0], [1,0], [2,0]], 
-  [[0,1], [1,1], [2,1]], 
-  [[0,2], [1,2], [2,2]], 
-  [[0,0], [1,1], [2,2]], 
-  [[2,0], [1,1], [0,2]], 
-];
-
-export const calculateRTP = () => {
-  const wildWeight = PAYTABLE.find(s => s.id === 'wild')?.weight || 0;
-  const pw = wildWeight / TOTAL_WEIGHT;
-
-  let regularBaseRTP = 0;
-  let jackpotBaseRTP = 0;
-  let totalLineProb = 0;
-
-  PAYTABLE.forEach(symbol => {
-    const px = symbol.weight / TOTAL_WEIGHT;
-    let probLine = 0;
-    
-    if (symbol.id === 'wild') {
-      probLine = Math.pow(pw, 3);
-      jackpotBaseRTP += probLine * symbol.payout * LINES.length;
-    } else {
-      probLine = Math.pow(px + pw, 3) - Math.pow(pw, 3);
-      if (symbol.id === 'five') {
-        jackpotBaseRTP += probLine * symbol.payout * LINES.length;
-      } else {
-        regularBaseRTP += probLine * symbol.payout * LINES.length;
-      }
-    }
-    totalLineProb += probLine;
-  });
-
-  // Calculate Hit Frequency (H) - chance of at least one line hitting
-  const hitFrequency = 1 - Math.pow(1 - totalLineProb, LINES.length);
-  
-  // Calculate Cascade Boost (G4)
-  // Formula: 1 + (H * 2) + (H^2 * 3) + (H^3 * 5)
-  // Note: This is an approximation for the multiplier effect
-  const cascadeBoost = 1 + (hitFrequency * 2) + (Math.pow(hitFrequency, 2) * 3) + (Math.pow(hitFrequency, 3) * 5);
-  
-  // Effective RTP = (Regular_RTP * CascadeBoost) + Jackpot_RTP + 0.09
-  const effectiveRTP = (regularBaseRTP * cascadeBoost) + jackpotBaseRTP + 0.09;
-  
-  return (effectiveRTP * 100).toFixed(2) + '%';
 };
 
 const formatDate = (date: Date) => {
@@ -116,6 +35,7 @@ const formatDate = (date: Date) => {
 };
 
 export default function App() {
+  const [config, setConfig] = useState<GameConfigResponse | null>(null);
   const [balance, setBalance] = useState(1000);
   const [bet, setBet] = useState(10);
   const [progressivePool, setProgressivePool] = useState(500);
@@ -130,6 +50,10 @@ export default function App() {
     }
     return Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => generateSymbol()));
   });
+
+  useEffect(() => {
+    mockBackendGetConfig().then(setConfig).catch(console.error);
+  }, []);
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinningCols, setSpinningCols] = useState<boolean[]>([false, false, false]);
   const [winningLines, setWinningLines] = useState<number[][]>([]);
@@ -663,8 +587,8 @@ export default function App() {
                 spinningCols={spinningCols} 
                 winAmount={winAmount} 
                 isSpinning={isSpinning} 
-                rtp={calculateRTP()} 
-                paytable={PAYTABLE}
+                rtp={config?.rtp || '0%'} 
+                paytable={config?.paytable || []}
                 heldCols={heldCols}
                 toggleHold={toggleHold}
                 canHold={canHold}
@@ -773,6 +697,9 @@ export default function App() {
           <Coins size={24} />
         </motion.div>
       ))}
+
+      {/* Comments Widget */}
+      <CommentsWidget unreadCount={15} />
     </div>
   );
 }
