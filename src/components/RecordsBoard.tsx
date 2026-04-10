@@ -41,11 +41,14 @@ export const RecordsBoard: React.FC<RecordsBoardProps> = ({
                 <div key={record.id} className="flex flex-col p-3 bg-zinc-800/50 rounded-xl text-sm gap-2 will-change-transform">
                   <div className="grid grid-cols-[120px_1fr_80px] items-center gap-2">
                     <span className="text-zinc-400 font-mono text-xs text-left whitespace-nowrap">{record.time}</span>
-                    <span className="text-zinc-300 text-center">Bet: {record.bet}</span>
+                    <div className="flex flex-col items-center">
+                      <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-0.5">Bet</span>
+                      <span className="text-zinc-300 font-mono leading-none">${record.bet}</span>
+                    </div>
                     <div className="flex flex-col items-end">
                       <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold leading-none mb-0.5">Net</span>
                       <span className={`font-bold font-mono text-right leading-none ${record.win - record.bet > 0 ? 'text-emerald-400' : record.win - record.bet < 0 ? 'text-red-400' : 'text-zinc-500'}`}>
-                        {record.win - record.bet > 0 ? `+${record.win - record.bet}` : record.win - record.bet}
+                        {record.win - record.bet > 0 ? `+$${(record.win - record.bet).toFixed(2)}` : `$${(record.win - record.bet).toFixed(2)}`}
                       </span>
                     </div>
                   </div>

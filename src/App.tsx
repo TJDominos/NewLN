@@ -70,7 +70,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'records' | 'winners'>('records');
 
   const [autoSpinsLeft, setAutoSpinsLeft] = useState(0);
-  const [autoSpinsSelected, setAutoSpinsSelected] = useState(0);
   const [showAutoMenu, setShowAutoMenu] = useState(false);
 
   // New Features State
@@ -121,12 +120,16 @@ export default function App() {
 
   const selectAutoSpins = (count: number) => {
     setShowAutoMenu(false);
-    setAutoSpinsSelected(count);
+    if (!isSpinning && balanceRefValue.current >= betRefValue.current) {
+      setAutoSpinsLeft(count - 1);
+      spinRef.current();
+    } else {
+      setAutoSpinsLeft(count);
+    }
   };
 
   const stopAutoSpins = () => {
     setAutoSpinsLeft(0);
-    setAutoSpinsSelected(0);
   };
 
   const spinRef = useRef<() => void>(() => {});
@@ -546,7 +549,7 @@ export default function App() {
               <div className="bg-zinc-950 rounded-lg p-1 px-2 md:px-3 flex justify-between items-center border border-yellow-500/30 h-full">
                 <p className="text-yellow-500 text-[8px] md:text-xs font-semibold uppercase tracking-widest whitespace-nowrap">Jackpot</p>
                 <p className="text-sm md:text-lg font-mono font-bold text-yellow-400 whitespace-nowrap ml-1">
-                  ${(bet * 1000 + progressivePool).toFixed(2)}
+                  ${(bet * 1000 + progressivePool).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
@@ -614,9 +617,6 @@ export default function App() {
               showAutoMenu={showAutoMenu}
               setShowAutoMenu={setShowAutoMenu}
               selectAutoSpins={selectAutoSpins}
-              autoSpinsSelected={autoSpinsSelected}
-              setAutoSpinsLeft={setAutoSpinsLeft}
-              setAutoSpinsSelected={setAutoSpinsSelected}
               spin={spin}
               balanceRef={balanceRef}
               winAmountRef={winAmountRef}

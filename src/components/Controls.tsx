@@ -13,9 +13,6 @@ interface ControlsProps {
   showAutoMenu: boolean;
   setShowAutoMenu: (show: boolean) => void;
   selectAutoSpins: (count: number) => void;
-  autoSpinsSelected: number;
-  setAutoSpinsLeft: (count: number) => void;
-  setAutoSpinsSelected: (count: number) => void;
   spin: () => void;
   balanceRef: RefObject<HTMLDivElement | null>;
   winAmountRef: RefObject<HTMLDivElement | null>;
@@ -32,9 +29,6 @@ export const Controls: React.FC<ControlsProps> = ({
   showAutoMenu,
   setShowAutoMenu,
   selectAutoSpins,
-  autoSpinsSelected,
-  setAutoSpinsLeft,
-  setAutoSpinsSelected,
   spin,
   balanceRef,
   winAmountRef,
@@ -115,7 +109,7 @@ export const Controls: React.FC<ControlsProps> = ({
         <div className="flex items-center gap-1.5 md:gap-2" ref={balanceRef}>
           <span className="text-zinc-500 text-[9px] md:text-[10px] uppercase tracking-wider font-semibold">Balance</span>
           <span className="text-sm md:text-base font-mono font-bold text-emerald-400 flex items-center gap-1">
-            <Coins size={12} className="md:w-3.5 md:h-3.5" /> {balance.toFixed(2)}
+            <Coins size={12} className="md:w-3.5 md:h-3.5" /> {balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2" ref={winAmountRef}>
@@ -130,7 +124,7 @@ export const Controls: React.FC<ControlsProps> = ({
                   exit={{ scale: 0.5, opacity: 0, y: -10 }}
                   className="text-base md:text-lg font-mono font-bold text-yellow-400 [text-shadow:1px_1px_0_#dc2626,-1px_-1px_0_#dc2626,1px_-1px_0_#dc2626,-1px_1px_0_#dc2626,0_0_15px_#dc2626]"
                 >
-                  +{winAmount.toFixed(2)}
+                  +{winAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </motion.span>
               ) : (
                 <motion.span 
@@ -220,19 +214,7 @@ export const Controls: React.FC<ControlsProps> = ({
             </AnimatePresence>
 
             <button
-              onClick={() => {
-                if (autoSpinsSelected > 0) {
-                  const selected = autoSpinsSelected;
-                  setAutoSpinsLeft(selected);
-                  setAutoSpinsSelected(0);
-                  if (!isSpinning) {
-                    spin();
-                    setAutoSpinsLeft(selected - 1);
-                  }
-                } else {
-                  spin();
-                }
-              }}
+              onClick={() => spin()}
               onTouchStart={(e) => {
                 // Prevent double trigger on some devices but allow interaction
                 if (!isSpinning && balance >= bet) {
@@ -248,7 +230,7 @@ export const Controls: React.FC<ControlsProps> = ({
                 }
               `}
             >
-              {isSpinning ? 'Spinning' : autoSpinsSelected > 0 ? 'Auto Spin' : 'Spin'}
+              {isSpinning ? 'Spinning' : 'Spin'}
             </button>
           </div>
         )}
