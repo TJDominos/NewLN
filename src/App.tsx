@@ -10,6 +10,8 @@ import { RecordsBoard } from './components/RecordsBoard';
 import { PlayRecord, PlayboardRecord } from './types';
 import { mockBackendSpin, SpinReceipt, mockBackendGetConfig, GameConfigResponse, generateSymbol, getRandomSymbol, mockBackendGetRecords } from './mockBackend';
 import { CommentsWidget } from './components/CommentsWidget';
+import { RankWidget } from './components/RankWidget';
+import { FloatingCommentsOverlay } from './components/FloatingCommentsOverlay';
 
 export type SymbolData = { id: string, name: IconName };
 
@@ -71,6 +73,8 @@ export default function App() {
 
   const [autoSpinsLeft, setAutoSpinsLeft] = useState(0);
   const [showAutoMenu, setShowAutoMenu] = useState(false);
+  const [showFloatingComments, setShowFloatingComments] = useState(true);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   // New Features State
   const [freeSpinsLeft, setFreeSpinsLeft] = useState(0);
@@ -536,7 +540,7 @@ export default function App() {
         <div className={`w-full max-w-5xl px-1.5 md:px-2 flex flex-col md:flex-row gap-1.5 md:gap-2 lg:gap-4 items-center md:items-stretch md:justify-center min-h-0 ${winLevel === 'mega' ? 'animate-shake-hard' : winLevel === 'big' || winLevel === 'medium' ? 'animate-shake' : ''}`}>
         
         {/* Main Game Area */}
-        <div className="w-full max-w-[min(100%,350px,50vh)] md:max-w-[min(100%,450px,60vh)] mx-auto flex flex-col gap-1.5 md:gap-2 lg:gap-3 justify-start min-w-0">
+        <div className="w-full md:flex-1 max-w-[min(100%,350px,50vh)] md:max-w-[450px] mx-auto flex flex-col gap-1.5 md:gap-2 lg:gap-3 justify-start min-w-0">
           {backendError && (
             <div className="w-full bg-red-900/80 border border-red-500 text-red-200 px-4 py-0.5 rounded-lg text-[10px] text-center shrink-0">
               {backendError}
@@ -625,7 +629,7 @@ export default function App() {
         </div>
 
         {/* Sidebar Area */}
-        <div className="w-full max-w-[min(100%,350px,50vh)] md:max-w-[min(100%,450px,60vh)] mx-auto flex flex-col shrink-0 h-[60vh] md:h-auto relative pb-8 md:pb-0">
+        <div className="w-full md:flex-1 max-w-[min(100%,350px,50vh)] md:max-w-[450px] mx-auto flex flex-col shrink-0 h-[60vh] md:h-auto relative pb-8 md:pb-0 overflow-hidden">
           <div className="w-full h-full md:absolute md:inset-0 flex flex-col">
             <RecordsBoard 
               activeTab={activeTab}
@@ -634,6 +638,10 @@ export default function App() {
               winners={winners}
             />
           </div>
+          <FloatingCommentsOverlay 
+            show={showFloatingComments} 
+            onClick={() => setIsCommentsOpen(true)}
+          />
         </div>
 
       </div>
@@ -704,7 +712,16 @@ export default function App() {
       ))}
 
       {/* Comments Widget */}
-      <CommentsWidget unreadCount={15} />
+      <CommentsWidget 
+        unreadCount={15} 
+        showFloatingComments={showFloatingComments}
+        setShowFloatingComments={setShowFloatingComments}
+        isOpen={isCommentsOpen}
+        setIsOpen={setIsCommentsOpen}
+      />
+
+      {/* Rank Widget */}
+      <RankWidget />
     </div>
   );
 }

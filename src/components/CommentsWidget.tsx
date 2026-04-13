@@ -5,10 +5,20 @@ import { MessageCircle, X, MoreHorizontal } from 'lucide-react';
 interface CommentsWidgetProps {
   unreadCount?: number;
   h5Url?: string; // Optional URL for the existing H5 comments page
+  showFloatingComments?: boolean;
+  setShowFloatingComments?: (show: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-export const CommentsWidget: React.FC<CommentsWidgetProps> = ({ unreadCount = 15, h5Url }) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const CommentsWidget: React.FC<CommentsWidgetProps> = ({ 
+  unreadCount = 15, 
+  h5Url,
+  showFloatingComments = true,
+  setShowFloatingComments,
+  isOpen,
+  setIsOpen
+}) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -71,12 +81,13 @@ export const CommentsWidget: React.FC<CommentsWidgetProps> = ({ unreadCount = 15
 
   return (
     <>
-      {/* Floating Button */}
-      <div 
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-40 cursor-pointer group"
-        onClick={() => setIsOpen(true)}
-      >
-        <div className="bg-zinc-950 border-y-2 border-l-2 border-fuchsia-500 rounded-l-2xl p-2 md:p-3 pr-2.5 md:pr-4 shadow-[0_0_15px_rgba(217,70,239,0.3)] transition-transform group-hover:-translate-x-1 flex flex-col items-center relative md:gap-1">
+      {/* Floating Buttons Container */}
+      <div className="fixed right-0 top-[calc(50%+0.5rem)] -translate-y-1/2 z-40 flex flex-col gap-2">
+        {/* Comments Button */}
+        <div 
+          className="bg-zinc-950 border-y-2 border-l-2 border-fuchsia-500 rounded-l-2xl p-2 md:p-3 pr-2.5 md:pr-4 shadow-[0_0_15px_rgba(217,70,239,0.3)] transition-transform hover:-translate-x-1 cursor-pointer flex flex-col items-center relative group"
+          onClick={() => setIsOpen(true)}
+        >
           <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-zinc-300" />
           {unreadCount > 0 && (
             <span className="absolute -top-1.5 -right-1 md:static md:mt-0 bg-red-500 md:bg-transparent text-white md:text-orange-400 font-mono font-bold text-[10px] md:text-sm px-1.5 md:px-0 rounded-full md:rounded-none min-w-[18px] text-center border-2 border-zinc-950 md:border-none leading-tight md:leading-normal">
@@ -121,12 +132,28 @@ export const CommentsWidget: React.FC<CommentsWidgetProps> = ({ unreadCount = 15
                   </button>
                   <h2 className="text-lg font-semibold text-zinc-900">Comments</h2>
                 </div>
-                <div className="relative">
-                  <div className="w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center border-2 border-yellow-400">
-                    <span className="text-[10px] font-bold text-yellow-400">Quick</span>
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 bg-zinc-200 rounded-full p-0.5 border border-zinc-400">
-                    <MessageCircle className="w-3 h-3 text-zinc-600" />
+                <div className="flex items-center gap-4">
+                  {setShowFloatingComments && (
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider group-hover:text-zinc-700 transition-colors">Float</span>
+                      <div className={`w-8 h-4 rounded-full transition-colors relative ${showFloatingComments ? 'bg-fuchsia-500' : 'bg-zinc-300'}`}>
+                        <div className={`absolute top-0.5 bottom-0.5 w-3 bg-white rounded-full transition-transform ${showFloatingComments ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        className="hidden" 
+                        checked={showFloatingComments}
+                        onChange={(e) => setShowFloatingComments(e.target.checked)}
+                      />
+                    </label>
+                  )}
+                  <div className="relative">
+                    <div className="w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center border-2 border-yellow-400">
+                      <span className="text-[10px] font-bold text-yellow-400">Quick</span>
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-zinc-200 rounded-full p-0.5 border border-zinc-400">
+                      <MessageCircle className="w-3 h-3 text-zinc-600" />
+                    </div>
                   </div>
                 </div>
               </div>
