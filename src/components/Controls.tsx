@@ -143,28 +143,28 @@ export const Controls: React.FC<ControlsProps> = ({
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
-        <div className="flex-1 h-10 md:h-11 bg-zinc-800 rounded-xl px-1 flex items-center justify-between border border-zinc-700/50">
+        <div className="w-[110px] md:w-[130px] shrink-0 h-10 md:h-11 bg-zinc-800 rounded-xl px-1 flex items-center justify-between border border-zinc-700/50">
           <button 
             onClick={handleMinus}
             disabled={isSpinning || bet <= 1 || autoSpinsLeft > 0}
-            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-default transition"
+            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-default transition shrink-0"
           >
             <Minus size={14} className="md:w-4 md:h-4" />
           </button>
-          <div className="flex items-center justify-center px-0.5">
+          <div className="flex items-center justify-center px-0.5 flex-1">
             <input
               type="number"
               value={inputValue}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
               disabled={isSpinning || autoSpinsLeft > 0}
-              className="w-10 md:w-16 bg-transparent text-center text-sm md:text-base font-mono font-bold outline-none text-white disabled:opacity-50 leading-none"
+              className="w-full bg-transparent text-center text-sm md:text-base font-mono font-bold outline-none text-white disabled:opacity-50 leading-none"
             />
           </div>
           <button 
             onClick={handlePlus}
             disabled={isSpinning || bet >= 100 || bet >= balance || autoSpinsLeft > 0}
-            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-default transition"
+            className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-zinc-700 rounded-lg hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-default transition shrink-0"
           >
             <Plus size={14} className="md:w-4 md:h-4" />
           </button>
@@ -184,9 +184,9 @@ export const Controls: React.FC<ControlsProps> = ({
             <button
               onClick={() => setShowAutoMenu(!showAutoMenu)}
               disabled={isSpinning}
-              className="px-2.5 md:px-3 h-full bg-zinc-800 rounded-xl border border-zinc-700 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-default transition flex items-center justify-center text-zinc-300"
+              className="px-3 md:px-4 h-full bg-zinc-800 rounded-xl border border-zinc-700 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-default transition flex items-center justify-center text-zinc-300 font-bold text-[10px] md:text-xs uppercase tracking-wider"
             >
-              <RefreshCw size={16} className="md:w-[18px] md:h-[18px]" />
+              Auto
             </button>
             
             <AnimatePresence>
