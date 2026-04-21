@@ -123,7 +123,7 @@ export const CommentsWidget: React.FC<CommentsWidgetProps> = ({
               className={`fixed z-50 bg-[#eaeaef] flex flex-col overflow-hidden shadow-2xl
                 ${isMobile 
                   ? 'bottom-0 left-0 right-0 h-[85vh] rounded-t-3xl' 
-                  : 'top-0 right-0 bottom-0 w-[400px]'
+                  : 'top-0 right-0 bottom-0 w-[320px]'
                 }`}
             >
                   {/* Header */}

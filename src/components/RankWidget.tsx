@@ -102,7 +102,7 @@ export const RankWidget: React.FC = () => {
               className={`fixed z-50 bg-[#18181b] flex flex-col overflow-hidden shadow-2xl border-l border-zinc-800
                 ${isMobile 
                   ? 'bottom-0 left-0 right-0 h-[85vh] rounded-t-3xl' 
-                  : 'top-0 right-0 bottom-0 w-[400px]'
+                  : 'top-0 right-0 bottom-0 w-[320px]'
                 }`}
             >
               {/* Header */}
@@ -113,7 +113,7 @@ export const RankWidget: React.FC = () => {
                   </button>
                   <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-yellow-400" />
-                    Global Ranks
+                    Ranks
                   </h2>
                 </div>
               </div>
