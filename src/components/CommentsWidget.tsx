@@ -122,7 +122,7 @@ export const CommentsWidget: React.FC<CommentsWidgetProps> = ({
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className={`fixed z-50 bg-[#eaeaef] flex flex-col overflow-hidden shadow-2xl
                 ${isMobile 
-                  ? 'bottom-0 left-0 right-0 h-[85vh] rounded-t-3xl' 
+                  ? 'bottom-0 left-0 right-0 h-[70dvh] max-h-[70vh] rounded-t-3xl' 
                   : 'top-0 right-0 bottom-0 w-[320px]'
                 }`}
             >
@@ -220,11 +220,11 @@ export const CommentsWidget: React.FC<CommentsWidgetProps> = ({
                       </svg>
                     </div>
                   </div>
-                  <div className="flex-1 bg-zinc-200/80 rounded-full px-4 py-2.5">
+                  <div className="flex-1 min-w-0 bg-zinc-200/80 rounded-full px-4 py-2.5">
                     <input 
                       type="text" 
                       placeholder="Add a comment for Quick Quid" 
-                      className="w-full bg-transparent border-none outline-none text-sm text-zinc-800 placeholder:text-zinc-400"
+                      className="w-full bg-transparent border-none outline-none text-[16px] text-zinc-800 placeholder:text-zinc-400"
                     />
                   </div>
                 </div>

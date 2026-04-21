@@ -101,7 +101,7 @@ export const RankWidget: React.FC = () => {
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className={`fixed z-50 bg-[#18181b] flex flex-col overflow-hidden shadow-2xl border-l border-zinc-800
                 ${isMobile 
-                  ? 'bottom-0 left-0 right-0 h-[85vh] rounded-t-3xl' 
+                  ? 'bottom-0 left-0 right-0 h-[70dvh] max-h-[70vh] rounded-t-3xl' 
                   : 'top-0 right-0 bottom-0 w-[320px]'
                 }`}
             >
