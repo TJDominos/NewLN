@@ -52,6 +52,66 @@ export const mockBackendGetRecords = async (lastId: string): Promise<PlayboardRe
   return globalRecords.filter(record => parseInt(record.id, 10) > lastIdNum);
 };
 
+export interface CommentData {
+  id: number;
+  user: string;
+  avatar: string;
+  date?: string;
+  content: string;
+  replies?: number;
+  verified?: boolean;
+}
+
+let globalCommentsIdCounter = 7;
+const globalComments: CommentData[] = [
+  { id: 1, user: 'System', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=System', content: 'Welcome to the platform! 🎮', replies: 0, verified: true },
+  { id: 2, user: 'ApeMan99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ApeMan99', content: 'Whoa, just hit a big milestone! 🚀', replies: 2, verified: false },
+  { id: 3, user: 'ProGamer', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=ProGamer', content: 'Can someone tell me how to level up faster?', replies: 1, verified: false },
+  { id: 4, user: 'System', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Tip', content: 'Tip: Check out the leaderboard to see top scores! 🏆', replies: 0, verified: true },
+  { id: 5, user: 'LuckyStrik3', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lucky', content: 'Waiting for that epic moment!!!', replies: 0, verified: false },
+  { id: 6, user: 'Bob', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob', content: 'Good luck everyone 🍀', replies: 0, verified: false },
+  { id: 7, user: 'RichGuy', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=RichGuy', content: 'Wow, insane combo! 🔥', replies: 5, verified: true }
+];
+
+// Simulate other users typing comments in the background
+setInterval(() => {
+  if (Math.random() < 0.3) {
+    globalCommentsIdCounter++;
+    const newComment = {
+      id: globalCommentsIdCounter,
+      user: 'Player_' + Math.floor(Math.random() * 999),
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random()}`,
+      content: ['Nice one!', 'Wow, so close', 'Amazing run!', 'I just logged in 👋', 'Good luck! 🍀', 'Lets gooo!'][Math.floor(Math.random() * 6)],
+      replies: 0,
+      verified: Math.random() > 0.8
+    };
+    globalComments.push(newComment);
+    if (globalComments.length > 200) {
+      globalComments.shift();
+    }
+  }
+}, 3000);
+
+// Fetch initial comments or recent comments
+export const mockBackendGetRecentComments = async (limit: number = 6): Promise<CommentData[]> => {
+  await new Promise(resolve => setTimeout(resolve, 200));
+  return globalComments.slice(-limit);
+};
+
+// Fetch entirely new comments since an ID
+export const mockBackendGetCommentsSince = async (lastId: number): Promise<CommentData[]> => {
+  await new Promise(resolve => setTimeout(resolve, 200));
+  const lastIndex = globalComments.findIndex(c => c.id === lastId);
+  if (lastIndex === -1) {
+    if (globalComments.length > 0 && lastId < globalComments[0].id) {
+       // if lastId is older than our oldest tracked comment, just return recent ones
+       return globalComments.slice(-10);
+    }
+    return [];
+  }
+  return globalComments.slice(lastIndex + 1);
+};
+
 /**
  * ==========================================
  * BACKEND API CONTRACT

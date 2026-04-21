@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, X, MoreHorizontal } from 'lucide-react';
+import { FloatingCommentsOverlay } from './FloatingCommentsOverlay';
 
 interface CommentsWidgetProps {
   unreadCount?: number;
@@ -81,6 +82,7 @@ export const CommentsWidget: React.FC<CommentsWidgetProps> = ({
 
   return (
     <>
+      <FloatingCommentsOverlay show={!!showFloatingComments} onClick={() => setIsOpen(true)} />
       {/* Floating Buttons Container */}
       <div className="fixed right-0 top-[calc(50%+0.5rem)] -translate-y-1/2 z-40 flex flex-col gap-2">
         {/* Comments Button */}
