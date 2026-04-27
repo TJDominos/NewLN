@@ -76,13 +76,13 @@ class SoundManager {
     this.buffers['coin'] = await this.createToneBuffer([1200, 2000], 0.1, 'sine', true);
     
     // Win levels - progressively more impactful
-    this.buffers['win_1x'] = await this.createImpactfulWinBuffer([523.25], 1.0, 'sine', false, false); // C5
-    this.buffers['win_2x'] = await this.createImpactfulWinBuffer([523.25, 659.25], 1.4, 'sine', false, false); // C5, E5
-    this.buffers['win_3x'] = await this.createImpactfulWinBuffer([523.25, 659.25, 783.99], 1.6, 'triangle', true, false); // C5, E5, G5
-    this.buffers['win_4x'] = await this.createImpactfulWinBuffer([523.25, 659.25, 783.99, 1046.50], 1.8, 'triangle', true, false); // C5, E5, G5, C6
-    this.buffers['win_5x'] = await this.createImpactfulWinBuffer([523.25, 659.25, 783.99, 1046.50, 1318.51], 2.0, 'triangle', true, false); // C5, E5, G5, C6, E6
+    this.buffers['win_1x'] = await this.createImpactfulWinBuffer([523.25], 0.8, 'triangle', false, false); // C5
+    this.buffers['win_2x'] = await this.createImpactfulWinBuffer([523.25, 659.25], 1.0, 'triangle', false, false); // C5, E5
+    this.buffers['win_3x'] = await this.createImpactfulWinBuffer([523.25, 659.25, 783.99], 1.2, 'triangle', true, false); // C5, E5, G5
+    this.buffers['win_4x'] = await this.createImpactfulWinBuffer([523.25, 659.25, 783.99, 1046.50], 1.4, 'square', true, false); // C5, E5, G5, C6
+    this.buffers['win_5x'] = await this.createImpactfulWinBuffer([523.25, 659.25, 783.99, 1046.50, 1318.51], 1.6, 'square', true, true); // C5, E5, G5, C6, E6
     
-    this.buffers['win_medium'] = await this.createImpactfulWinBuffer([440, 554.37, 659.25, 880, 1108.73], 2.0, 'square', true, true); // A major arpeggio
+    this.buffers['win_medium'] = await this.createImpactfulWinBuffer([440, 554.37, 659.25, 880, 1108.73], 1.8, 'square', true, true); // A major arpeggio
     this.buffers['win_big'] = await this.createImpactfulWinBuffer([523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98], 1.0, 'square', true, true); // C major extended
     this.buffers['win_mega'] = await this.createImpactfulWinBuffer([440, 554.37, 659.25, 880, 1108.73, 1318.51, 1760, 2217.46], 1.0, 'square', true, true); // Epic
   }
@@ -101,8 +101,9 @@ class SoundManager {
   createFreewheelBuffer(totalDuration: number, volume: number) {
     const sampleRate = this.ctx!.sampleRate;
     const length = sampleRate * totalDuration; 
-    const buffer = this.ctx!.createBuffer(1, length, sampleRate);
-    const data = buffer.getChannelData(0);
+    const buffer = this.ctx!.createBuffer(2, length, sampleRate); // 2 channels for stereo
+    const left = buffer.getChannelData(0);
+    const right = buffer.getChannelData(1);
     
     // A single tick of a bike freewheel spanning the totalDuration
     for (let i = 0; i < length; i++) {
@@ -112,10 +113,15 @@ class SoundManager {
         const env = Math.exp(-i / (sampleRate * 0.0008));
         // Mix of high-pitch resonance (metallic) and a little noise
         const metallic = Math.sin(i * 0.9) * Math.sin(i * 0.4);
+        
+        // Use the exact same noise for L and R to guarantee perfect centered balance
         const noise = Math.random() * 2 - 1;
-        data[i] = (metallic * 0.6 + noise * 0.4) * env * volume;
+        
+        left[i] = (metallic * 0.6 + noise * 0.4) * env * volume;
+        right[i] = (metallic * 0.6 + noise * 0.4) * env * volume;
       } else {
-        data[i] = 0;
+        left[i] = 0;
+        right[i] = 0;
       }
     }
     return buffer;
@@ -240,12 +246,13 @@ class SoundManager {
     
     const gain = this.ctx.createGain();
     
-    const winVolume = 1.0; // Maximize win volume
+    // Increased cascade sound volume by 50%
+    const winVolume = 1.5; 
     
     if (name.startsWith('win_')) {
       gain.gain.value = winVolume;
     } else if (name === 'spin_loop' || name === 'spin') {
-      gain.gain.value = 0.16; // Increased by 100% for better audibility
+      gain.gain.value = 0.21; // Increased by ~30% from 0.16
     } else {
       gain.gain.value = 0.6; // Default for coin, etc.
     }
