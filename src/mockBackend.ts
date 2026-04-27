@@ -228,10 +228,13 @@ export const calculateRTP = () => {
   // Calculate Hit Frequency (H) - chance of at least one line hitting
   const hitFrequency = 1 - Math.pow(1 - totalLineProb, LINES.length);
   
-  // Calculate Cascade Boost (G4)
-  // Formula: 1 + (H * 2) + (H^2 * 3) + (H^3 * 5)
-  // Note: This is an approximation for the multiplier effect
-  const cascadeBoost = 1 + (hitFrequency * 2) + (Math.pow(hitFrequency, 2) * 3) + (Math.pow(hitFrequency, 3) * 5);
+  // Calculate Cascade Boost (G4) using the strict exact 5x-max formula:
+  // EV = 1 + 2H + 3H^2 + 4H^3 + 5H^4/(1-H)
+  const cascadeBoost = 1 + 
+    (2 * hitFrequency) + 
+    (3 * Math.pow(hitFrequency, 2)) + 
+    (4 * Math.pow(hitFrequency, 3)) + 
+    (5 * Math.pow(hitFrequency, 4) / (1 - hitFrequency));
   
   // Effective RTP = (Regular_RTP * CascadeBoost) + Jackpot_RTP + 0.09
   const effectiveRTP = (regularBaseRTP * cascadeBoost) + jackpotBaseRTP + 0.09;
@@ -413,7 +416,8 @@ export const mockBackendSpin = async (
       break;
     }
 
-    multiplier++;
+    // Hard ceiling the multiplier at a maximum of 5x
+    multiplier = Math.min(multiplier + 1, 5);
 
     // Safety break
     if (cascades.length > 50) break;

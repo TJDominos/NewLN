@@ -71,8 +71,8 @@ class SoundManager {
   async generateSounds() {
     if (!this.ctx) return;
     
-    this.buffers['spin'] = this.createNoiseBuffer(0.05, 0.3);
-    this.buffers['spin_loop'] = this.createSmoothTickingBuffer(0.05, 0.1, 0.3);
+    this.buffers['spin'] = this.createFreewheelBuffer(0.04, 0.15); // Quick single tick
+    this.buffers['spin_loop'] = this.createFreewheelBuffer(0.04, 0.15); // Rapid 25Hz bike freewheel loop
     this.buffers['coin'] = await this.createToneBuffer([1200, 2000], 0.1, 'sine', true);
     
     // Win levels - progressively more impactful
@@ -98,27 +98,22 @@ class SoundManager {
     return buffer;
   }
 
-  createSmoothTickingBuffer(tickDuration: number, totalDuration: number, volume: number) {
+  createFreewheelBuffer(totalDuration: number, volume: number) {
     const sampleRate = this.ctx!.sampleRate;
-    const length = sampleRate * totalDuration;
+    const length = sampleRate * totalDuration; 
     const buffer = this.ctx!.createBuffer(1, length, sampleRate);
     const data = buffer.getChannelData(0);
-    const tickLength = sampleRate * tickDuration;
     
-    // Smooth envelope parameters
-    const attackLength = sampleRate * 0.005; // 5ms attack
-    
+    // A single tick of a bike freewheel spanning the totalDuration
     for (let i = 0; i < length; i++) {
-      if (i < tickLength) {
-        let env = 1;
-        if (i < attackLength) {
-          env = i / attackLength; // Linear fade in
-        } else {
-          // Exponential-like fade out
-          const fadeProgress = (i - attackLength) / (tickLength - attackLength);
-          env = Math.pow(1 - fadeProgress, 2);
-        }
-        data[i] = (Math.random() * 2 - 1) * volume * env;
+      // The tick itself is very short and metallic (~3ms)
+      if (i < sampleRate * 0.003) {
+        // Exponential decay for a crisp click
+        const env = Math.exp(-i / (sampleRate * 0.0008));
+        // Mix of high-pitch resonance (metallic) and a little noise
+        const metallic = Math.sin(i * 0.9) * Math.sin(i * 0.4);
+        const noise = Math.random() * 2 - 1;
+        data[i] = (metallic * 0.6 + noise * 0.4) * env * volume;
       } else {
         data[i] = 0;
       }
@@ -250,7 +245,7 @@ class SoundManager {
     if (name.startsWith('win_')) {
       gain.gain.value = winVolume;
     } else if (name === 'spin_loop' || name === 'spin') {
-      gain.gain.value = 0.30; // Reduced by another 20% (from 0.38)
+      gain.gain.value = 0.16; // Increased by 100% for better audibility
     } else {
       gain.gain.value = 0.6; // Default for coin, etc.
     }
