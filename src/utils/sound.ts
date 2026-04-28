@@ -159,7 +159,17 @@ class SoundManager {
 
   async createImpactfulWinBuffer(frequencies: number[], duration: number, type: OscillatorType, addBass: boolean = false, addNoise: boolean = false) {
     const sampleRate = this.ctx!.sampleRate;
-    const offlineCtx = new OfflineAudioContext(1, sampleRate * duration, sampleRate);
+    // 2 channels for stereo
+    const offlineCtx = new OfflineAudioContext(2, sampleRate * duration, sampleRate);
+    
+    // Add a dynamics compressor to prevent clipping ("breaking") when sounds overlap
+    const compressor = offlineCtx.createDynamicsCompressor();
+    compressor.threshold.value = -12;
+    compressor.knee.value = 5;
+    compressor.ratio.value = 8;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.1;
+    compressor.connect(offlineCtx.destination);
     
     const step = duration / Math.max(frequencies.length, 1);
     
@@ -170,11 +180,23 @@ class SoundManager {
       const osc1 = offlineCtx.createOscillator();
       const gain = offlineCtx.createGain();
       
+      // Create a stereo panner for each note, bouncing left and right for an immersive balanced stereo effect
+      const panner = offlineCtx.createStereoPanner ? offlineCtx.createStereoPanner() : null;
+      if (panner) {
+        // Alternate pan from -0.4 (left) to 0.4 (right), centered if only 1 note
+        panner.pan.value = frequencies.length > 1 ? (i % 2 === 0 ? -0.4 : 0.4) : 0;
+      }
+      
       osc1.type = type;
       osc1.frequency.value = freq;
       
       osc1.connect(gain);
-      gain.connect(offlineCtx.destination);
+      if (panner) {
+        gain.connect(panner);
+        panner.connect(compressor);
+      } else {
+        gain.connect(compressor);
+      }
       
       gain.gain.setValueAtTime(0, startTime);
       gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05);
@@ -199,7 +221,8 @@ class SoundManager {
       
       bassOsc.connect(bassGain);
       bassGain.connect(filter);
-      filter.connect(offlineCtx.destination);
+      // Connect to compressor
+      filter.connect(compressor);
       
       bassGain.gain.setValueAtTime(0, 0);
       bassGain.gain.linearRampToValueAtTime(0.2, 0.05);
@@ -226,7 +249,8 @@ class SoundManager {
       
       noiseSource.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
-      noiseGain.connect(offlineCtx.destination);
+      // Connect to compressor
+      noiseGain.connect(compressor);
       
       noiseSource.start(0);
     }
@@ -244,25 +268,38 @@ class SoundManager {
     const source = this.ctx.createBufferSource();
     source.buffer = this.buffers[name];
     
-    const gain = this.ctx.createGain();
+    // In Web Audio API, a 'GainNode' is used to control the volume of a sound
+    const volumeControlNode = this.ctx.createGain();
     
-    // Increased cascade sound volume by 50%
-    const winVolume = 1.5; 
+    // Separate the specific volumes for different sound effects
+    const SOUND_VOLUMES = {
+      WIN_CASCADE_EFFECTS: 1.0, // The encouraging cascade win sound volume
+      REEL_SPIN_SOUND: 0.47,    // The continuous ticking sound while reels are spinning
+      DEFAULT_COIN: 0.6         // Default UI sound volume
+    };
+    
+    // Determine which volume to use based on the sound name
+    let targetVolume = SOUND_VOLUMES.DEFAULT_COIN;
     
     if (name.startsWith('win_')) {
-      gain.gain.value = winVolume;
+      // 1. Set Win Cascade Effect Volume
+      targetVolume = SOUND_VOLUMES.WIN_CASCADE_EFFECTS;
     } else if (name === 'spin_loop' || name === 'spin') {
-      gain.gain.value = 0.21; // Increased by ~30% from 0.16
-    } else {
-      gain.gain.value = 0.6; // Default for coin, etc.
+      // 2. Set Reel Spin Sound Volume
+      targetVolume = SOUND_VOLUMES.REEL_SPIN_SOUND;
     }
     
-    source.connect(gain);
-    gain.connect(this.ctx.destination);
+    // Apply the chosen volume to the audio node
+    volumeControlNode.gain.value = targetVolume;
+    
+    source.connect(volumeControlNode);
+    volumeControlNode.connect(this.ctx.destination);
     
     source.loop = loop;
     source.start(0);
-    return { source, gain };
+    
+    // Return 'gain' as the property name for backward compatibility with stopSpinSound()
+    return { source, gain: volumeControlNode };
   }
 
   setBgm(enabled: boolean) {
